@@ -122,8 +122,17 @@
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
             <a class="navbar-brand" href="#"><img src="logo.png" alt="3Gen3D Logo" style="max-height:100px; width: auto; object-fit: contain;"></a>
+            
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
+            
             <div class="collapse navbar-collapse" id="navbarNav">
+                
+                <div class="mx-auto my-2 my-lg-0 flex-grow-1 px-lg-5">
+                    <div class="input-group">
+                        <input type="text" class="form-control border-end-0 rounded-start" id="searchInput" placeholder="Ürün, kategori veya marka ara..." onkeyup="updateSearchQuery(this.value)">
+                        <span class="input-group-text bg-white border-start-0 text-muted rounded-end"><i class="fas fa-search"></i></span>
+                    </div>
+                </div>
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-semibold align-items-center">
                     <li class="nav-item me-3"><a class="nav-link" href="?page=about" target="_blank">Hakkımızda</a></li>
                     <li class="nav-item me-3"><a class="nav-link" href="?page=contact" target="_blank">İletişim</a></li>
@@ -366,6 +375,8 @@
         
         let banners = [];
 
+        let activeSearch = ""; // Arama metnini tutacak değişken
+
         let categories = [{ name: "Genel", sub: ["Yeni"] }];
         
         let products = [
@@ -483,24 +494,58 @@
             } catch (err) { console.error("Bulut hatası:", err); }
         }
 
-        // --- ÜRÜN LİSTELEME ---
+        // --- ARAMA İŞLEVİ İÇİN YENİ FONKSİYON ---
+        function updateSearchQuery(val) {
+            activeSearch = val.toLowerCase().trim(); // Yazılanı küçült ve boşlukları temizle
+            renderProducts(); // Listeyi yeniden çiz
+        }
+
+        // --- GÜNCELLENMİŞ ÜRÜN LİSTELEME FONKSİYONU ---
         function renderProducts(){
-            const l=document.getElementById('productList');l.innerHTML="";
-            let min=parseFloat(document.getElementById('minPriceInput').value)||0;
-            let max=parseFloat(document.getElementById('maxPriceInput').value)||Infinity;
+            const l=document.getElementById('productList');
+            if(!l) return;
+            l.innerHTML="";
             
-            let filtered=products.filter(p=>p.price>=min&&p.price<=max);
-            if(activeFilter.main!=='Tümü'){
-                filtered=filtered.filter(p=>p.category===activeFilter.main);
-                if(activeFilter.sub)filtered=filtered.filter(p=>p.subCategory===activeFilter.sub)
-            }
-            if(activeColor.length>0)filtered=filtered.filter(p=>p.colors.some(c=>activeColor.includes(c)));
-            if(activeSize.length>0)filtered=filtered.filter(p=>p.sizes.some(s=>activeSize.includes(s)));
+            let minInput = document.getElementById('minPriceInput');
+            let maxInput = document.getElementById('maxPriceInput');
+            let min = minInput ? (parseFloat(minInput.value)||0) : 0;
+            let max = maxInput ? (parseFloat(maxInput.value)||Infinity) : Infinity;
             
-            document.getElementById('productCount').innerText=filtered.length;
+            // FİLTRELEME MANTIĞI
+            let filtered = products.filter(p => {
+                // 1. Fiyat Kontrolü
+                let priceOK = p.price >= min && p.price <= max;
+                
+                // 2. Kategori Kontrolü
+                let catOK = true;
+                if(activeFilter.main !== 'Tümü'){
+                    if(p.category !== activeFilter.main) catOK = false;
+                    else if(activeFilter.sub && p.subCategory !== activeFilter.sub) catOK = false;
+                }
+
+                // 3. Renk ve Boyut Kontrolü
+                let colorOK = activeColor.length === 0 || p.colors.some(c => activeColor.includes(c));
+                let sizeOK = activeSize.length === 0 || p.sizes.some(s => activeSize.includes(s));
+
+                // 4. ARAMA MOTORU KONTROLÜ (YENİ)
+                let searchOK = true;
+                if(activeSearch !== "") {
+                    // Ürün isminde, markasında veya açıklamasında aranan kelime var mı?
+                    let searchSource = (p.name + " " + p.brand + " " + p.desc).toLowerCase();
+                    searchOK = searchSource.includes(activeSearch);
+                }
+
+                return priceOK && catOK && colorOK && sizeOK && searchOK;
+            });
             
-            if(filtered.length===0){
-                l.innerHTML=`<div class="col-12 text-center py-5 text-muted">Ürün bulunamadı.</div>`;
+            const countEl = document.getElementById('productCount');
+            if(countEl) countEl.innerText = filtered.length;
+            
+            if(filtered.length === 0){
+                l.innerHTML=`<div class="col-12 text-center py-5 text-muted">
+                    <i class="fas fa-search fa-3x mb-3 text-secondary"></i><br>
+                    Aradığınız kriterlere uygun ürün bulunamadı.
+                </div>`;
                 return;
             }
             
@@ -747,6 +792,7 @@
     </script>
 </body>
 </html>
+
 
 
 
