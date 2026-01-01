@@ -90,7 +90,7 @@
         .cat-admin-item { background: #fff; border-left: 4px solid #ddd; padding: 10px; margin-bottom: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .sub-cat-badge { font-size: 0.8rem; background: #e9ecef; padding: 2px 8px; border-radius: 12px; margin-right: 5px; display: inline-block; margin-top: 5px; }
 
-        /* YENİ: Geri Tuşu Şıklığı (Mobil uyumlu) */
+        /* Geri Tuşu Şıklığı */
         .modal-back-btn {
             position: absolute;
             top: 15px;
@@ -205,97 +205,142 @@
 
     <div class="modal fade" id="infoModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" id="infoModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="infoModalBody" style="white-space: pre-wrap;"></div></div></div></div>
     
-    <div class="modal fade" id="productDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content" style="border-radius: 12px; overflow: hidden; position: relative;">
-        <div class="modal-back-btn" onclick="history.back()" title="Geri Dön">
-            <i class="fas fa-arrow-left"></i>
-        </div>
-        
-        <div class="modal-header border-0"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body pb-4">
-            <div class="row">
-                <div class="col-md-6 mb-3 mb-md-0">
-                    <img id="detailImg" src="" class="img-fluid rounded shadow-sm w-100 mb-2">
-                    <div id="detailGallery" class="gallery-container"></div>
-                </div>
-                <div class="col-md-6">
-                    <small class="text-muted" id="detailBrand">Marka</small>
-                    <h3 id="detailTitle" class="fw-bold mb-1">Ürün Adı</h3>
-                    <div class="mb-2"><span id="detailCatBadge" class="badge bg-secondary me-2"></span><span id="detailModelCode" class="small text-muted"></span></div>
-                    
-                    <div class="mb-3">
-                        <span id="detailOldPrice" class="old-price"></span>
-                        <h2 id="detailPrice" class="text-primary fw-bold d-inline">0 TL</h2>
-                        <div class="small text-success fw-bold" id="detailStockStatus"></div>
+    <div class="modal fade" id="productDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content" style="border-radius: 0;">
+                <div class="container mt-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <button class="btn btn-light border rounded-circle me-3" onclick="history.back()" title="Geri Dön" style="width:40px; height:40px;"><i class="fas fa-arrow-left"></i></button>
+                        <h5 class="mb-0 fw-bold">Ürün Detayı</h5>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
                     </div>
 
-                    <div class="p-3 bg-light rounded mb-3 small">
-                        <div class="row">
-                            <div class="col-6 mb-1"><strong>Materyal:</strong> <span id="detailMaterial">-</span></div>
-                            <div class="col-6 mb-1"><strong>Menşei:</strong> <span id="detailOrigin">TR</span></div>
-                            <div class="col-12"><strong>Yaş Grubu:</strong> <span id="detailAge">-</span></div>
+                    <div class="modal-body pb-5">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3 mb-md-0">
+                                        <img id="detailImg" src="" class="img-fluid rounded shadow-sm w-100 mb-2">
+                                        <div id="detailGallery" class="gallery-container"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <small class="text-muted" id="detailBrand">Marka</small>
+                                        <h3 id="detailTitle" class="fw-bold mb-1">Ürün Adı</h3>
+                                        <div class="mb-2"><span id="detailCatBadge" class="badge bg-secondary me-2"></span><span id="detailModelCode" class="small text-muted"></span></div>
+                                        
+                                        <div class="mb-3">
+                                            <span id="detailOldPrice" class="old-price"></span>
+                                            <h2 id="detailPrice" class="text-primary fw-bold d-inline">0 TL</h2>
+                                            <div class="small text-success fw-bold" id="detailStockStatus"></div>
+                                        </div>
+
+                                        <div class="p-3 bg-light rounded mb-3 small">
+                                            <div class="row">
+                                                <div class="col-6 mb-1"><strong>Materyal:</strong> <span id="detailMaterial">-</span></div>
+                                                <div class="col-6 mb-1"><strong>Menşei:</strong> <span id="detailOrigin">TR</span></div>
+                                                <div class="col-12"><strong>Yaş Grubu:</strong> <span id="detailAge">-</span></div>
+                                            </div>
+                                        </div>
+
+                                        <div id="variantSection" class="mb-4">
+                                            <div class="mb-2" id="colorDiv" style="display:none;"><label class="fw-bold small mb-1">Renk:</label><select class="form-select form-select-sm" id="detailColorSelect"></select></div>
+                                            <div class="mb-2" id="sizeDiv" style="display:none;"><label class="fw-bold small mb-1">Boyut:</label><select class="form-select form-select-sm" id="detailSizeSelect"></select></div>
+                                        </div>
+                                        
+                                        <button class="btn btn-primary-custom btn-lg w-100" onclick="addToCartFromDetail()">Sepete Ekle</button>
+                                        
+                                        <div class="mt-4 border-top pt-3">
+                                            <h6 class="fw-bold small">Ürün Açıklaması</h6>
+                                            <p id="detailDesc" class="text-muted small mb-0"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-
-                    <div id="variantSection" class="mb-4">
-                        <div class="mb-2" id="colorDiv" style="display:none;"><label class="fw-bold small mb-1">Renk:</label><select class="form-select form-select-sm" id="detailColorSelect"></select></div>
-                        <div class="mb-2" id="sizeDiv" style="display:none;"><label class="fw-bold small mb-1">Boyut:</label><select class="form-select form-select-sm" id="detailSizeSelect"></select></div>
-                    </div>
-                    
-                    <button class="btn btn-primary-custom btn-lg w-100" onclick="addToCartFromDetail()">Sepete Ekle</button>
-                    
-                    <div class="mt-4 border-top pt-3">
-                        <h6 class="fw-bold small">Ürün Açıklaması</h6>
-                        <p id="detailDesc" class="text-muted small mb-0"></p>
                     </div>
                 </div>
             </div>
         </div>
-    </div></div></div>
+    </div>
 
     <div class="modal fade" id="loginModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Giriş Yap</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="loginForm"><input type="email" class="form-control mb-3" id="loginEmail" placeholder="E-posta" required><input type="password" class="form-control mb-3" id="loginPass" placeholder="Şifre" required><button type="submit" class="btn btn-primary-custom w-100">Giriş</button></form><div class="text-center mt-3"><a href="#" data-bs-toggle="modal" data-bs-target="#registerModal">Kayıt Ol</a></div></div></div></div></div>
     <div class="modal fade" id="registerModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Kayıt Ol</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="registerForm"><div class="row g-3"><div class="col-6"><input type="text" class="form-control" id="regName" placeholder="Ad Soyad" required></div><div class="col-6"><input type="tel" class="form-control" id="regPhone" placeholder="Telefon" required></div><div class="col-6"><input type="email" class="form-control" id="regEmail" placeholder="E-posta" required></div><div class="col-6"><input type="password" class="form-control" id="regPass" placeholder="Şifre" required></div><div class="col-12"><textarea class="form-control" id="regAddress" placeholder="Teslimat Adresi" required></textarea></div><button type="submit" class="btn btn-success mt-3 w-100">Kayıt Ol</button></div></form></div></div></div></div>
     
-    <div class="modal fade" id="cartModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
-        <div class="modal-back-btn ms-2 mt-2" onclick="history.back()" title="Geri Dön" style="position:relative; top:0; left:0; width:30px; height:30px; display:inline-flex; border:none; box-shadow:none;"><i class="fas fa-arrow-left"></i></div>
-        <div class="modal-header border-0 pt-0"><h5 class="modal-title">Sepetim</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div id="emptyCartMsg" class="text-center py-5" style="display:none;"><i class="fas fa-shopping-basket fa-3x text-muted mb-3"></i><p>Sepet boş.</p></div><div id="cartContent"><div id="cartItemsList"></div><div class="text-end fw-bold fs-5 mt-3 text-primary">Toplam: <span id="cartTotal">0 TL</span></div><hr><div class="customer-type-selector"><div class="type-btn active" id="btnIndividual" onclick="toggleCustomerType('individual')"><i class="fas fa-user"></i> Bireysel</div><div class="type-btn" id="btnCorporate" onclick="toggleCustomerType('corporate')"><i class="fas fa-building"></i> Kurumsal</div></div><form id="individualForm" class="row g-3"><div class="col-6"><input type="text" class="form-control" id="indName" placeholder="Ad" required></div><div class="col-6"><input type="text" class="form-control" id="indSurname" placeholder="Soyad" required></div><div class="col-6"><input type="tel" class="form-control" id="indPhone" placeholder="Telefon" required></div><div class="col-6"><input type="email" class="form-control" id="indEmail" placeholder="E-posta" required></div><div class="col-12"><textarea class="form-control" id="indAddress" placeholder="Teslimat Adresi" required></textarea></div><div class="col-12"><div class="form-check bg-light p-2 border"><input class="form-check-input" type="checkbox" id="indSameAddress" onchange="toggleBilling('individual')"><label class="form-check-label">Fatura adresi aynı olsun</label></div></div><div class="col-12" id="indBillingDiv"><textarea class="form-control" id="indBillingAddress" placeholder="Fatura Adresi"></textarea></div></form><form id="corporateForm" class="row g-3" style="display:none;"><div class="col-12"><input type="text" class="form-control" id="corpName" placeholder="Şirket İsmi" required></div><div class="col-6"><input type="tel" class="form-control" id="corpPhone" placeholder="Telefon" required></div><div class="col-6"><input type="email" class="form-control" id="corpEmail" placeholder="E-posta" required></div><div class="col-12"><textarea class="form-control" id="corpAddress" placeholder="Teslimat Adresi" required></textarea></div><div class="col-12"><div class="form-check bg-light p-2 border"><input class="form-check-input" type="checkbox" id="corpSameAddress" onchange="toggleBilling('corporate')"><label class="form-check-label">Fatura adresi aynı olsun</label></div></div><div class="col-12" id="corpBillingDiv"><textarea class="form-control" id="corpBillingAddress" placeholder="Fatura Adresi"></textarea></div></form><div class="alert alert-warning mt-3 p-2 small"><strong>IBAN:</strong> <span id="displayIban"></span><br><strong>Alıcı:</strong> <span id="displayAccountName"></span></div></div></div><div class="modal-footer"><button class="btn btn-success w-100 py-2" onclick="checkoutWhatsapp()"><i class="fab fa-whatsapp"></i> Siparişi Tamamla</button></div></div></div></div>
+    <div class="modal fade" id="cartModal" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+            <div class="modal-content" style="border-radius: 0;">
+                <div class="container mt-3 h-100 d-flex flex-column">
+                    <div class="d-flex align-items-center mb-3 flex-shrink-0">
+                        <button class="btn btn-light border rounded-circle me-3" onclick="history.back()" title="Geri Dön" style="width:40px; height:40px;"><i class="fas fa-arrow-left"></i></button>
+                        <h5 class="mb-0 fw-bold">Sepetim</h5>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <div class="modal-body flex-grow-1">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-8">
+                                <div id="emptyCartMsg" class="text-center py-5" style="display:none;"><i class="fas fa-shopping-basket fa-3x text-muted mb-3"></i><p>Sepet boş.</p></div>
+                                <div id="cartContent">
+                                    <div id="cartItemsList"></div>
+                                    <div class="text-end fw-bold fs-5 mt-3 text-primary">Toplam: <span id="cartTotal">0 TL</span></div>
+                                    <hr>
+                                    <div class="customer-type-selector"><div class="type-btn active" id="btnIndividual" onclick="toggleCustomerType('individual')"><i class="fas fa-user"></i> Bireysel</div><div class="type-btn" id="btnCorporate" onclick="toggleCustomerType('corporate')"><i class="fas fa-building"></i> Kurumsal</div></div>
+                                    <form id="individualForm" class="row g-3"><div class="col-6"><input type="text" class="form-control" id="indName" placeholder="Ad" required></div><div class="col-6"><input type="text" class="form-control" id="indSurname" placeholder="Soyad" required></div><div class="col-6"><input type="tel" class="form-control" id="indPhone" placeholder="Telefon" required></div><div class="col-6"><input type="email" class="form-control" id="indEmail" placeholder="E-posta" required></div><div class="col-12"><textarea class="form-control" id="indAddress" placeholder="Teslimat Adresi" required></textarea></div><div class="col-12"><div class="form-check bg-light p-2 border"><input class="form-check-input" type="checkbox" id="indSameAddress" onchange="toggleBilling('individual')"><label class="form-check-label">Fatura adresi aynı olsun</label></div></div><div class="col-12" id="indBillingDiv"><textarea class="form-control" id="indBillingAddress" placeholder="Fatura Adresi"></textarea></div></form>
+                                    <form id="corporateForm" class="row g-3" style="display:none;"><div class="col-12"><input type="text" class="form-control" id="corpName" placeholder="Şirket İsmi" required></div><div class="col-6"><input type="tel" class="form-control" id="corpPhone" placeholder="Telefon" required></div><div class="col-6"><input type="email" class="form-control" id="corpEmail" placeholder="E-posta" required></div><div class="col-12"><textarea class="form-control" id="corpAddress" placeholder="Teslimat Adresi" required></textarea></div><div class="col-12"><div class="form-check bg-light p-2 border"><input class="form-check-input" type="checkbox" id="corpSameAddress" onchange="toggleBilling('corporate')"><label class="form-check-label">Fatura adresi aynı olsun</label></div></div><div class="col-12" id="corpBillingDiv"><textarea class="form-control" id="corpBillingAddress" placeholder="Fatura Adresi"></textarea></div></form>
+                                    <div class="alert alert-warning mt-3 p-2 small"><strong>IBAN:</strong> <span id="displayIban"></span><br><strong>Alıcı:</strong> <span id="displayAccountName"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer flex-shrink-0 justify-content-center">
+                        <div class="col-lg-8 w-100">
+                            <button class="btn btn-success w-100 py-2" onclick="checkoutWhatsapp()"><i class="fab fa-whatsapp"></i> Siparişi Tamamla</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="adminModal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
+        <div class="modal-dialog modal-fullscreen modal-dialog-scrollable">
+            <div class="modal-content" style="border-radius: 0;">
                 <div class="modal-header bg-dark text-white">
                     <h5 class="modal-title">Yönetim Paneli</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body bg-light">
-                    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
-                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabGeneral">Ayarlar</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabBanner">Banner / Manşet</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabCategory">Kategoriler</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabProduct">Ürün Yönetimi</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabContent">İçerik</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabTheme">Tema</button></li>
-                    </ul>
+                    <div class="container">
+                        <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+                            <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabGeneral">Ayarlar</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabBanner">Banner / Manşet</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabCategory">Kategoriler</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabProduct">Ürün Yönetimi</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabContent">İçerik</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabTheme">Tema</button></li>
+                        </ul>
 
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="tabGeneral"><div class="row g-3"><div class="col-md-6"><label class="form-label">Site İsmi</label><input type="text" class="form-control" id="inputSiteName" value="3Gen3D"></div><div class="col-md-6"><label class="form-label">WhatsApp</label><input type="text" class="form-control" id="inputWhatsapp"></div><div class="col-md-6"><label class="form-label">Alıcı Adı</label><input type="text" class="form-control" id="inputAccountName"></div><div class="col-md-6"><label class="form-label">IBAN</label><input type="text" class="form-control" id="inputIban"></div><div class="col-12"><label class="form-label">Açık Adres</label><textarea class="form-control" id="inputAddress" rows="2"></textarea></div></div></div>
-                        <div class="tab-pane fade" id="tabBanner"><div class="admin-form-section"><div class="admin-form-header">Yeni Banner Ekle</div><form id="addBannerForm"><div class="row g-3"><div class="col-md-6"><label class="form-label">Başlık</label><input type="text" class="form-control" id="bannerTitleInput"></div><div class="col-md-6"><label class="form-label">Açıklama</label><input type="text" class="form-control" id="bannerDescInput"></div><div class="col-12"><label class="form-label">Görsel</label><input type="file" class="form-control" id="bannerImgFile" accept="image/*"><input type="hidden" id="bannerImgBase64"></div><div class="col-12 text-end"><button type="submit" class="btn btn-success">Ekle</button></div></div></form></div><div class="card p-0 overflow-hidden border"><table class="table table-striped table-hover mb-0"><thead class="table-dark"><tr><th>Görsel</th><th>Başlık</th><th>İşlem</th></tr></thead><tbody id="adminBannerTable"></tbody></table></div></div>
-                        <div class="tab-pane fade" id="tabCategory"><div class="input-group mb-3"><input type="text" class="form-control" id="newMainCatName" placeholder="Yeni Ana Kategori Adı"><button class="btn btn-primary" onclick="addMainCategory()">Ekle</button></div><div id="adminCategoryList"></div></div>
-                        <div class="tab-pane fade" id="tabContent"><div class="mb-3"><label class="fw-bold">Hakkımızda</label><textarea class="form-control" id="inputAboutText" rows="5"></textarea></div><div class="mb-3"><label class="fw-bold">İletişim</label><textarea class="form-control" id="inputContactText" rows="5"></textarea></div></div>
-                        <div class="tab-pane fade" id="tabTheme"><div class="row g-3"><div class="col-md-6"><label>Ana Renk</label><input type="color" class="form-control w-100" id="inputColor"></div><div class="col-md-6"><label>İkincil Renk</label><input type="color" class="form-control w-100" id="inputSecColor"></div><div class="col-md-6"><label>Arkaplan</label><input type="color" class="form-control w-100" id="inputBgColor"></div></div></div>
+                        <div class="tab-content">
+                            <div class="tab-pane fade show active" id="tabGeneral"><div class="row g-3"><div class="col-md-6"><label class="form-label">Site İsmi</label><input type="text" class="form-control" id="inputSiteName" value="3Gen3D"></div><div class="col-md-6"><label class="form-label">WhatsApp</label><input type="text" class="form-control" id="inputWhatsapp"></div><div class="col-md-6"><label class="form-label">Alıcı Adı</label><input type="text" class="form-control" id="inputAccountName"></div><div class="col-md-6"><label class="form-label">IBAN</label><input type="text" class="form-control" id="inputIban"></div><div class="col-12"><label class="form-label">Açık Adres</label><textarea class="form-control" id="inputAddress" rows="2"></textarea></div></div></div>
+                            <div class="tab-pane fade" id="tabBanner"><div class="admin-form-section"><div class="admin-form-header">Yeni Banner Ekle</div><form id="addBannerForm"><div class="row g-3"><div class="col-md-6"><label class="form-label">Başlık</label><input type="text" class="form-control" id="bannerTitleInput"></div><div class="col-md-6"><label class="form-label">Açıklama</label><input type="text" class="form-control" id="bannerDescInput"></div><div class="col-12"><label class="form-label">Görsel</label><input type="file" class="form-control" id="bannerImgFile" accept="image/*"><input type="hidden" id="bannerImgBase64"></div><div class="col-12 text-end"><button type="submit" class="btn btn-success">Ekle</button></div></div></form></div><div class="card p-0 overflow-hidden border"><table class="table table-striped table-hover mb-0"><thead class="table-dark"><tr><th>Görsel</th><th>Başlık</th><th>İşlem</th></tr></thead><tbody id="adminBannerTable"></tbody></table></div></div>
+                            <div class="tab-pane fade" id="tabCategory"><div class="input-group mb-3"><input type="text" class="form-control" id="newMainCatName" placeholder="Yeni Ana Kategori Adı"><button class="btn btn-primary" onclick="addMainCategory()">Ekle</button></div><div id="adminCategoryList"></div></div>
+                            <div class="tab-pane fade" id="tabContent"><div class="mb-3"><label class="fw-bold">Hakkımızda</label><textarea class="form-control" id="inputAboutText" rows="5"></textarea></div><div class="mb-3"><label class="fw-bold">İletişim</label><textarea class="form-control" id="inputContactText" rows="5"></textarea></div></div>
+                            <div class="tab-pane fade" id="tabTheme"><div class="row g-3"><div class="col-md-6"><label>Ana Renk</label><input type="color" class="form-control w-100" id="inputColor"></div><div class="col-md-6"><label>İkincil Renk</label><input type="color" class="form-control w-100" id="inputSecColor"></div><div class="col-md-6"><label>Arkaplan</label><input type="color" class="form-control w-100" id="inputBgColor"></div></div></div>
 
-                        <div class="tab-pane fade" id="tabProduct">
-                            <div id="productFormArea" class="mb-4">
-                                <div class="d-flex justify-content-between mb-3"><h5 class="fw-bold text-dark" id="formTitle">Ürün Ekleme / Düzenleme</h5><button class="btn btn-sm btn-secondary" onclick="resetProductForm()" id="cancelEditBtn" style="display:none;">İptal</button></div>
-                                <form id="addProductForm">
-                                    <input type="hidden" id="editProductId">
-                                    <div class="admin-form-section"><div class="admin-form-header">1. Ürün Bilgileri</div><div class="row g-3"><div class="col-md-6"><label class="form-label">Ürün Adı *</label><input type="text" class="form-control" id="prodName" required></div><div class="col-md-6"><label class="form-label">Marka</label><input type="text" class="form-control" id="prodBrand" placeholder="Örn: 3Gen3D"></div><div class="col-md-6"><label class="form-label">Model Kodu</label><input type="text" class="form-control" id="prodModelCode"></div><div class="col-md-3"><label class="form-label">Kategori *</label><select class="form-select" id="prodMainCat" onchange="renderSubCatSelect()"></select></div><div class="col-md-3"><label class="form-label">Alt Kategori</label><select class="form-select" id="prodSubCat"><option value="">Yok</option></select></div></div></div>
-                                    <div class="admin-form-section"><div class="admin-form-header">2. Ürün Özellikleri</div><div class="row g-3"><div class="col-md-4"><label class="form-label">Materyal</label><input type="text" class="form-control" id="prodMaterial" placeholder="Örn: PLA, ABS"></div><div class="col-md-4"><label class="form-label">Menşei</label><input type="text" class="form-control" id="prodOrigin" value="Türkiye"></div><div class="col-md-4"><label class="form-label">Yaş Grubu</label><input type="text" class="form-control" id="prodAgeGroup" placeholder="Örn: 3+ Yaş"></div></div></div>
-                                    <div class="admin-form-section"><div class="admin-form-header">3. Satış ve Varyant Bilgileri</div><div class="row g-3"><div class="col-md-3"><label class="form-label">Piyasa Fiyatı (TL)</label><input type="number" class="form-control" id="prodMarketPrice"></div><div class="col-md-3"><label class="form-label">Satış Fiyatı (TL) *</label><input type="number" class="form-control" id="prodPrice" required></div><div class="col-md-3"><label class="form-label">Stok Adedi</label><input type="number" class="form-control" id="prodStock" value="10"></div><div class="col-md-3"><label class="form-label">KDV Oranı (%)</label><input type="number" class="form-control" id="prodKDV" value="20"></div><div class="col-md-6"><label class="form-label">Barkod</label><input type="text" class="form-control" id="prodBarcode"></div><div class="col-md-6"><label class="form-label">Stok Kodu</label><input type="text" class="form-control" id="prodStockCode"></div><div class="col-12 border-top pt-3 mt-2"><label class="form-label fw-bold text-primary">Varyant Tanımları (Filtreleme İçin)</label><div class="row g-2"><div class="col-md-6"><input type="text" class="form-control" id="prodColors" placeholder="Renk Seçenekleri (Virgülle)"></div><div class="col-md-6"><input type="text" class="form-control" id="prodSizes" placeholder="Boyut Seçenekleri (Virgülle)"></div><div class="col-12 text-end"><button type="button" class="btn btn-sm btn-info text-white" onclick="generateVariantTable()">Varyantları Oluştur</button></div><div class="col-12"><table class="table table-bordered table-sm small variant-table"><thead><tr><th>Varyant</th><th>Piyasa (TL)</th><th>Satış (TL)</th><th>Stok</th><th>Görsel No</th></tr></thead><tbody id="variantTableBody"></tbody></table></div></div></div></div>
-                                    <div class="admin-form-section"><div class="admin-form-header">4. Görsel ve Açıklama</div><div class="row g-3"><div class="col-12"><label class="form-label">Ürün Açıklaması</label><textarea class="form-control" id="prodDesc" rows="4"></textarea></div><div class="col-12"><div class="col-auto"><label class="btn btn-outline-primary"><i class="fas fa-plus"></i> Görsel Ekle <input type="file" id="prodImgFile" accept="image/*" style="display: none;"></label></div><div class="col-12 mt-2" id="prodImagePreviewContainer"></div></div></div></div>
-                                    <div class="text-end"><button type="submit" class="btn btn-success btn-lg px-5" id="saveProductBtn"><i class="fas fa-check me-2"></i> Kaydet</button></div>
-                                </form>
+                            <div class="tab-pane fade" id="tabProduct">
+                                <div id="productFormArea" class="mb-4">
+                                    <div class="d-flex justify-content-between mb-3"><h5 class="fw-bold text-dark" id="formTitle">Ürün Ekleme / Düzenleme</h5><button class="btn btn-sm btn-secondary" onclick="resetProductForm()" id="cancelEditBtn" style="display:none;">İptal</button></div>
+                                    <form id="addProductForm">
+                                        <input type="hidden" id="editProductId">
+                                        <div class="admin-form-section"><div class="admin-form-header">1. Ürün Bilgileri</div><div class="row g-3"><div class="col-md-6"><label class="form-label">Ürün Adı *</label><input type="text" class="form-control" id="prodName" required></div><div class="col-md-6"><label class="form-label">Marka</label><input type="text" class="form-control" id="prodBrand" placeholder="Örn: 3Gen3D"></div><div class="col-md-6"><label class="form-label">Model Kodu</label><input type="text" class="form-control" id="prodModelCode"></div><div class="col-md-3"><label class="form-label">Kategori *</label><select class="form-select" id="prodMainCat" onchange="renderSubCatSelect()"></select></div><div class="col-md-3"><label class="form-label">Alt Kategori</label><select class="form-select" id="prodSubCat"><option value="">Yok</option></select></div></div></div>
+                                        <div class="admin-form-section"><div class="admin-form-header">2. Ürün Özellikleri</div><div class="row g-3"><div class="col-md-4"><label class="form-label">Materyal</label><input type="text" class="form-control" id="prodMaterial" placeholder="Örn: PLA, ABS"></div><div class="col-md-4"><label class="form-label">Menşei</label><input type="text" class="form-control" id="prodOrigin" value="Türkiye"></div><div class="col-md-4"><label class="form-label">Yaş Grubu</label><input type="text" class="form-control" id="prodAgeGroup" placeholder="Örn: 3+ Yaş"></div></div></div>
+                                        <div class="admin-form-section"><div class="admin-form-header">3. Satış ve Varyant Bilgileri</div><div class="row g-3"><div class="col-md-3"><label class="form-label">Piyasa Fiyatı (TL)</label><input type="number" class="form-control" id="prodMarketPrice"></div><div class="col-md-3"><label class="form-label">Satış Fiyatı (TL) *</label><input type="number" class="form-control" id="prodPrice" required></div><div class="col-md-3"><label class="form-label">Stok Adedi</label><input type="number" class="form-control" id="prodStock" value="10"></div><div class="col-md-3"><label class="form-label">KDV Oranı (%)</label><input type="number" class="form-control" id="prodKDV" value="20"></div><div class="col-md-6"><label class="form-label">Barkod</label><input type="text" class="form-control" id="prodBarcode"></div><div class="col-md-6"><label class="form-label">Stok Kodu</label><input type="text" class="form-control" id="prodStockCode"></div><div class="col-12 border-top pt-3 mt-2"><label class="form-label fw-bold text-primary">Varyant Tanımları (Filtreleme İçin)</label><div class="row g-2"><div class="col-md-6"><input type="text" class="form-control" id="prodColors" placeholder="Renk Seçenekleri (Virgülle)"></div><div class="col-md-6"><input type="text" class="form-control" id="prodSizes" placeholder="Boyut Seçenekleri (Virgülle)"></div><div class="col-12 text-end"><button type="button" class="btn btn-sm btn-info text-white" onclick="generateVariantTable()">Varyantları Oluştur</button></div><div class="col-12"><table class="table table-bordered table-sm small variant-table"><thead><tr><th>Varyant</th><th>Piyasa (TL)</th><th>Satış (TL)</th><th>Stok</th><th>Görsel No</th></tr></thead><tbody id="variantTableBody"></tbody></table></div></div></div></div>
+                                        <div class="admin-form-section"><div class="admin-form-header">4. Görsel ve Açıklama</div><div class="row g-3"><div class="col-12"><label class="form-label">Ürün Açıklaması</label><textarea class="form-control" id="prodDesc" rows="4"></textarea></div><div class="col-12"><div class="col-auto"><label class="btn btn-outline-primary"><i class="fas fa-plus"></i> Görsel Ekle <input type="file" id="prodImgFile" accept="image/*" style="display: none;"></label></div><div class="col-12 mt-2" id="prodImagePreviewContainer"></div></div></div></div>
+                                        <div class="text-end"><button type="submit" class="btn btn-success btn-lg px-5" id="saveProductBtn"><i class="fas fa-check me-2"></i> Kaydet</button></div>
+                                    </form>
+                                </div>
+                                <div class="card p-0 overflow-hidden border"><table class="table table-striped table-hover mb-0"><thead class="table-dark"><tr><th>Görsel</th><th>Ürün Adı</th><th>Fiyat Aralığı</th><th>Stok</th><th>İşlem</th></tr></thead><tbody id="adminProductTable"></tbody></table></div>
                             </div>
-                            <div class="card p-0 overflow-hidden border"><table class="table table-striped table-hover mb-0"><thead class="table-dark"><tr><th>Görsel</th><th>Ürün Adı</th><th>Fiyat Aralığı</th><th>Stok</th><th>İşlem</th></tr></thead><tbody id="adminProductTable"></tbody></table></div>
                         </div>
                     </div>
                 </div>
@@ -311,13 +356,12 @@
         
         let API_KEY = ""; 
         
-        // Varsayılanlar (Site ilk açıldığında bunlar görünecek)
+        // Varsayılanlar
         let siteSettings = { 
             whatsapp: "905068999960", accountName: "Abdullah Daşmaz", iban: "TR00 0000 0000 0000 0000 0000 00",
             address: "Kütahya Merkez", aboutText: "3Gen3D...", contactText: "İletişim..."
         };
         
-        // ORİJİNAL MANŞETLER GERİ GELDİ
         let banners = [
             { img: "https://via.placeholder.com/1200x400/222/fff?text=Hosgeldiniz", title: "3Gen3D Dünyası", desc: "En kaliteli 3D baskı ürünleri." },
             { img: "https://via.placeholder.com/1200x400/f76002/fff?text=Indirim", title: "Büyük İndirim", desc: "Tüm anahtarlıklarda %20 indirim fırsatı." }
@@ -325,7 +369,6 @@
 
         let categories = [{ name: "Genel", sub: ["Yeni"] }];
         
-        // ORİJİNAL ÜRÜN GERİ GELDİ
         let products = [
             { 
                 id: 1, name: "Özel Tasarım Anahtarlık", brand: "3Gen3D", modelCode: "ANA-001", 
@@ -343,65 +386,49 @@
         let tempImages = [];
 
         // --- TARİHÇE VE GERİ TUŞU YÖNETİMİ ---
-        let isPopState = false; // Geri tuşuyla mı gelindi kontrolü
+        let isPopState = false; 
 
         function setUrlState(key, value) {
             const url = new URL(window.location);
             url.searchParams.set(key, value);
-            // pushState ile yeni bir geçmiş kaydı oluşturuyoruz, böylece geri tuşu çalışır
             window.history.pushState({modal: key}, '', url);
         }
 
         function clearUrlState() {
-            // URL'i temizle ama geçmişi bozma (replaceState kullan)
             const url = new URL(window.location);
-            // Eğer geri tuşuyla geldiysek zaten URL temizdir, bir şey yapma
             if(isPopState) { isPopState = false; return; }
-            
-            // Eğer kullanıcı "X" ile kapattıysa, geçmişte geri gitmeliyiz ki URL düzelsin
-            // Ancak bunu yaparken sonsuz döngüye girmemeye dikkat etmeliyiz.
-            // En basit yöntem: ReplaceState ile URL'i temizle.
             url.searchParams.delete('product');
             url.searchParams.delete('cart');
             window.history.replaceState({}, '', url.pathname + url.search);
         }
 
-        // Browser Geri Tuşu Dinleyicisi
         window.addEventListener('popstate', function(event) {
-            isPopState = true; // Flag'i kaldır
-            // Tüm modalları kapat
+            isPopState = true; 
             document.querySelectorAll('.modal.show').forEach(m => {
                 const modalInstance = bootstrap.Modal.getInstance(m);
                 if(modalInstance) modalInstance.hide();
             });
         });
 
-        // Modallar kapandığında URL'i temizle
         document.addEventListener('hidden.bs.modal', function (event) {
             if(!isPopState) {
-                // Eğer manuel kapatıldıysa URL'i temizle
                 const url = new URL(window.location);
                 url.searchParams.delete('product');
                 url.searchParams.delete('cart');
                 window.history.replaceState({}, '', url.pathname + url.search);
             }
-            isPopState = false; // Reset
+            isPopState = false; 
         });
-
 
         // --- BAŞLANGIÇ ---
         document.addEventListener('DOMContentLoaded', function() {
-            // Renk ayarını hatasız al
             const rootStyles = getComputedStyle(document.documentElement);
             document.getElementById('inputColor').value = rootStyles.getPropertyValue('--primary-color').trim();
             document.getElementById('inputSecColor').value = rootStyles.getPropertyValue('--secondary-color').trim();
             document.getElementById('inputBgColor').value = rootStyles.getPropertyValue('--bg-color').trim();
 
-            // ÖNCE EKRANI ÇİZ (Gecikme olmasın)
             renderCarousel();
             renderProducts(); 
-
-            // SONRA BULUTTAN GÜNCELLEMEYE ÇALIŞ
             loadFromCloud(); 
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -429,29 +456,24 @@
                     if(rec.products && rec.products.length > 0) products = rec.products;
 
                     console.log("Veriler yüklendi!");
-                    // Ekranı güncelle
                     updateUI(); 
                     renderCarousel(); 
                     renderSidebarFilters(); 
                     renderProducts();
                     renderAdminProductList(); renderAdminCategories(); renderMainCatSelect(); renderAdminBanners();
 
-                    // --- DEEP LINK KONTROLÜ (Veri geldikten sonra) ---
                     const urlParams = new URLSearchParams(window.location.search);
                     
-                    // 1. Ürün Linki Kontrolü
                     if(urlParams.has('product')) {
                         const prodId = parseInt(urlParams.get('product'));
                         if(!isNaN(prodId)) {
-                            // Ürünü bul ve aç (URL zaten set edilmiş, tekrar push yapma)
                             const p = products.find(x => x.id === prodId);
                             if(p) {
-                                openProductDetail(prodId, false); // false = URL güncelleme (zaten var)
+                                openProductDetail(prodId, false); 
                             }
                         }
                     }
 
-                    // 2. Sepet Linki Kontrolü
                     if(urlParams.get('cart') === 'open') {
                         const cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
                         cartModal.show();
@@ -485,7 +507,6 @@
             
             filtered.forEach(p=>{
                 let oldPriceDisplay=p.marketPrice>p.price?`<span class="old-price">${p.marketPrice} TL</span>`:"";
-                // LİNK YOK, ONCLICK VAR
                 l.innerHTML+=`
                 <div class="col">
                     <div class="card product-card">
@@ -631,12 +652,10 @@
         function generateVariantTable() { const colors = document.getElementById('prodColors').value.split(',').map(s=>s.trim()).filter(s=>s); const sizes = document.getElementById('prodSizes').value.split(',').map(s=>s.trim()).filter(s=>s); document.getElementById('variantTableBody').innerHTML = ""; if(colors.length === 0 && sizes.length === 0) { addVariantRow("-", "-", 0, 0, 10, 1); } else { const cList = colors.length ? colors : ["-"]; const sList = sizes.length ? sizes : ["-"]; cList.forEach(c => { sList.forEach(s => { addVariantRow(c, s, 0, 0, 10, 1); }); }); } }
         function addVariantRow(c, s, mp, p, stk, imgIdx) { document.getElementById('variantTableBody').innerHTML += `<tr data-color="${c}" data-size="${s}" class="variant-row"><td>${c} / ${s}</td><td><input type="number" class="form-control form-control-sm v-mp" value="${mp}" placeholder="Piyasa"></td><td><input type="number" class="form-control form-control-sm v-p" value="${p}" placeholder="Satış"></td><td><input type="number" class="form-control form-control-sm v-stk" value="${stk}"></td><td><input type="number" class="form-control form-control-sm v-img" value="${imgIdx}" min="1"></td></tr>`; }
         
-        // --- ÜRÜN DETAY AÇMA GÜNCELLENDİ (URL DESTEKLİ) ---
         function openProductDetail(id, updateUrl = true) { 
             const p = products.find(x => x.id === id); 
             if(!p) return; 
             
-            // URL GÜNCELLEME
             if(updateUrl) setUrlState('product', id);
 
             currentDetailId = p.id; 
@@ -667,7 +686,6 @@
             new bootstrap.Modal(document.getElementById('productDetailModal')).show(); 
         }
 
-        // --- SEPET AÇMA GÜNCELLENDİ (URL DESTEKLİ) ---
         function openCartModal() {
             setUrlState('cart', 'open');
             renderCart();
