@@ -829,5 +829,119 @@
             renderSidebarFilters();
             renderMainCatSelect();
         }
+        
+        // Ana Kategori Ekleme
+        function addMainCategory() {
+            const input = document.getElementById('newMainCatName');
+            const name = input.value.trim();
+            
+            if (!name) return alert("Lütfen bir kategori ismi yazın!");
+            
+            // Listeye ekle
+            categories.push({ name: name, sub: [] });
+            
+            // Kutuyu temizle
+            input.value = "";
+            
+            // Ekranı güncelle ve kaydet
+            refreshAllCats();
+            saveToCloud();
+        }
+        
+        // Alt Kategori Ekleme
+        function addSubCategory(index) {
+            const name = prompt("Yeni Alt Kategori İsmi:");
+            if (name) {
+                categories[index].sub.push(name);
+                refreshAllCats();
+                saveToCloud();
+            }
+        }
+        
+        // Kategori Silme
+        function deleteCategory(index) {
+            if (confirm("Bu kategoriyi silmek istediğine emin misin?")) {
+                categories.splice(index, 1);
+                refreshAllCats();
+                saveToCloud();
+            }
+        }
+        
+        // Alt Kategori Silme
+        function deleteSubCategory(mainIndex, subIndex) {
+            if (confirm("Bu alt kategoriyi silmek istiyor musun?")) {
+                categories[mainIndex].sub.splice(subIndex, 1);
+                refreshAllCats();
+                saveToCloud();
+            }
+        }
+        
+        // Kategori Düzenleme
+        function editMainCategory(index) {
+            const newName = prompt("Kategori Adını Düzenle:", categories[index].name);
+            if (newName) {
+                categories[index].name = newName;
+                refreshAllCats();
+                saveToCloud();
+            }
+        }
+        
+        function editSubCategory(mainIndex, subIndex) {
+            const newName = prompt("Alt Kategori Adını Düzenle:", categories[mainIndex].sub[subIndex]);
+            if (newName) {
+                categories[mainIndex].sub[subIndex] = newName;
+                refreshAllCats();
+                saveToCloud();
+            }
+        }
+        
+        // Kategoriyi Aşağı/Yukarı Taşıma
+        function moveCategory(index, direction) {
+            if (direction === -1 && index > 0) {
+                [categories[index], categories[index - 1]] = [categories[index - 1], categories[index]];
+            } else if (direction === 1 && index < categories.length - 1) {
+                [categories[index], categories[index + 1]] = [categories[index + 1], categories[index]];
+            }
+            refreshAllCats();
+            saveToCloud();
+        }
+        
+        // Admin Listesini Çizen Fonksiyon (Güncel Hali)
+        function renderAdminCategories(){
+            const list = document.getElementById('adminCategoryList');
+            list.innerHTML = "";
+            
+            if(categories.length === 0) {
+                list.innerHTML = "<div class='text-muted p-2'>Henüz kategori yok.</div>";
+                return;
+            }
+        
+            categories.forEach((cat, index) => {
+                let subHtml = cat.sub.map((sub, sIndex) => 
+                    `<span class="sub-cat-badge">${sub} 
+                        <i class="fas fa-pen text-primary ms-1" style="cursor:pointer" onclick="editSubCategory(${index}, ${sIndex})"></i>
+                        <i class="fas fa-times text-danger ms-1" style="cursor:pointer" onclick="deleteSubCategory(${index}, ${sIndex})"></i>
+                    </span>`
+                ).join('');
+                
+                list.innerHTML += `
+                <div class="cat-admin-item">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="me-2">${cat.name}</strong>
+                            <button class="btn btn-sm btn-link p-0 text-secondary me-1" onclick="editMainCategory(${index})"><i class="fas fa-pen"></i></button>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-light border me-1" onclick="moveCategory(${index}, -1)"><i class="fas fa-arrow-up"></i></button>
+                            <button class="btn btn-sm btn-light border me-1" onclick="moveCategory(${index}, 1)"><i class="fas fa-arrow-down"></i></button>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="addSubCategory(${index})">+ Alt</button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(${index})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="mt-2">${subHtml}</div>
+                </div>`;
+            });
+        }
     </script>
+
 
