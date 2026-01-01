@@ -824,4 +824,10 @@
         function renderSubCatSelect(){const mainVal=document.getElementById('prodMainCat').value;const subSelect=document.getElementById('prodSubCat');subSelect.innerHTML='<option value="">Yok</option>';const cat=categories.find(c=>c.name===mainVal);if(cat&&cat.sub.length>0)cat.sub.forEach(s=>subSelect.innerHTML+=`<option value="${s}">${s}</option>`)}
         function updateUI(){document.getElementById('whatsappLink').href=`https://wa.me/${siteSettings.whatsapp}`;document.getElementById('footerAddress').innerText=siteSettings.address;document.getElementById('footerPhone').innerText=siteSettings.whatsapp;document.getElementById('footerCopyrightName').innerText=document.getElementById('inputSiteName').value||"3Gen3D";document.getElementById('inputSiteName').value=document.title.split(' - ')[0];document.getElementById('inputWhatsapp').value=siteSettings.whatsapp;document.getElementById('inputAccountName').value=siteSettings.accountName;document.getElementById('inputIban').value=siteSettings.iban;document.getElementById('inputAddress').value=siteSettings.address;document.getElementById('inputAboutText').value=siteSettings.aboutText;document.getElementById('inputContactText').value=siteSettings.contactText}
         function renderAdminBanners() { const t = document.getElementById('adminBannerTable'); t.innerHTML = ""; banners.forEach((b, i) => { t.innerHTML += `<tr><td><img src="${b.img}" style="height:40px; border-radius:4px;"></td><td>${b.title}</td><td><button class="btn btn-sm btn-danger" onclick="deleteBanner(${i})"><i class="fas fa-trash"></i></button></td></tr>`; }); }
+        function refreshAllCats() {
+            renderAdminCategories();
+            renderSidebarFilters();
+            renderMainCatSelect();
+        }
     </script>
+
