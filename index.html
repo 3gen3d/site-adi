@@ -89,18 +89,22 @@
         .nav-tabs .nav-link { color: var(--secondary-color); }
         .cat-admin-item { background: #fff; border-left: 4px solid #ddd; padding: 10px; margin-bottom: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .sub-cat-badge { font-size: 0.8rem; background: #e9ecef; padding: 2px 8px; border-radius: 12px; margin-right: 5px; display: inline-block; margin-top: 5px; }
+        
+        /* FOOTER ADMIN LINK STYLE */
+        #footerCopyrightName { cursor: pointer; }
+        #footerCopyrightName:hover { text-decoration: underline; color: var(--primary-color); }
     </style>
 </head>
 <body>
 
     <nav class="navbar navbar-expand-lg sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="#"><img src="logo.png" alt="3Gen3D Logo" style="max-height:100px; width: auto; object-fit: contain;"></a>
+            <a class="navbar-brand" href="?"><img src="logo.png" alt="3Gen3D Logo" style="max-height:100px; width: auto; object-fit: contain;"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0 fw-semibold align-items-center">
-                    <li class="nav-item me-3"><a class="nav-link" href="?page=about" target="_blank">Hakkımızda</a></li>
-                    <li class="nav-item me-3"><a class="nav-link" href="?page=contact" target="_blank">İletişim</a></li>
+                    <li class="nav-item me-3"><a class="nav-link" href="#" onclick="showInfoModal('Hakkımızda', siteSettings.aboutText); return false;">Hakkımızda</a></li>
+                    <li class="nav-item me-3"><a class="nav-link" href="#" onclick="showInfoModal('İletişim', siteSettings.contactText); return false;">İletişim</a></li>
                     
                     <li class="nav-item me-3" id="guestMenu"><a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#loginModal"><i class="fas fa-user me-1"></i> Giriş / Üye Ol</a></li>
                     <li class="nav-item dropdown me-3" id="userMenu" style="display:none;">
@@ -108,7 +112,7 @@
                         <ul class="dropdown-menu"><li><a class="dropdown-item text-danger" href="#" onclick="logoutUser()">Çıkış Yap</a></li></ul>
                     </li>
                     <li class="nav-item position-relative">
-                        <a class="nav-link text-primary" href="#" data-bs-toggle="modal" data-bs-target="#cartModal" onclick="renderCart()">
+                        <a class="nav-link text-primary" href="#" onclick="openCartModal(); return false;">
                             <i class="fas fa-shopping-cart fa-lg"></i> <span class="cart-badge" id="cartCount">0</span>
                         </a>
                     </li>
@@ -150,7 +154,7 @@
             <div class="row justify-content-center mb-4">
                 <div class="col-md-6"><h5 class="fw-bold mb-3" style="color: var(--primary-color);">İletişim Bilgileri</h5><p class="mb-1"><i class="fas fa-map-marker-alt me-2"></i> <span id="footerAddress">...</span></p><p><i class="fas fa-phone me-2"></i> <span id="footerPhone">...</span></p></div>
             </div>
-            <div class="text-muted small">2025 © <span id="footerCopyrightName">3Gen3D</span> - Tüm Hakları Saklıdır.</div>
+            <div class="text-muted small">2025 © <span id="footerCopyrightName" onclick="openAdminInNewTab()" title="Yönetici Paneli İçin Tıkla">3Gen3D</span> - Tüm Hakları Saklıdır.</div>
         </div>
     </footer>
 
@@ -270,16 +274,13 @@
     <script>
     
         const BIN_ID = "6953b479d0ea881f40495ed5"; 
-        
         let API_KEY = ""; 
         
-        // Varsayılanlar (Site ilk açıldığında bunlar görünecek)
         let siteSettings = { 
             whatsapp: "905068999960", accountName: "Abdullah Daşmaz", iban: "TR00 0000 0000 0000 0000 0000 00",
             address: "Kütahya Merkez", aboutText: "3Gen3D...", contactText: "İletişim..."
         };
         
-        // ORİJİNAL MANŞETLER GERİ GELDİ
         let banners = [
             { img: "https://via.placeholder.com/1200x400/222/fff?text=Hosgeldiniz", title: "3Gen3D Dünyası", desc: "En kaliteli 3D baskı ürünleri." },
             { img: "https://via.placeholder.com/1200x400/f76002/fff?text=Indirim", title: "Büyük İndirim", desc: "Tüm anahtarlıklarda %20 indirim fırsatı." }
@@ -287,7 +288,6 @@
 
         let categories = [{ name: "Genel", sub: ["Yeni"] }];
         
-        // ORİJİNAL ÜRÜN GERİ GELDİ
         let products = [
             { 
                 id: 1, name: "Özel Tasarım Anahtarlık", brand: "3Gen3D", modelCode: "ANA-001", 
@@ -306,63 +306,79 @@
 
         // --- BAŞLANGIÇ ---
         document.addEventListener('DOMContentLoaded', function() {
-            // Renk ayarını hatasız al
             const rootStyles = getComputedStyle(document.documentElement);
             document.getElementById('inputColor').value = rootStyles.getPropertyValue('--primary-color').trim();
             document.getElementById('inputSecColor').value = rootStyles.getPropertyValue('--secondary-color').trim();
             document.getElementById('inputBgColor').value = rootStyles.getPropertyValue('--bg-color').trim();
 
-            // ÖNCE EKRANI ÇİZ (Gecikme olmasın)
             renderCarousel();
             renderProducts(); 
-
-            // SONRA BULUTTAN GÜNCELLEMEYE ÇALIŞ
             loadFromCloud(); 
 
+            // URL KONTROLÜ (Admin Paneli Yeni Sekme Olayı)
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.get('panel') === '3gen') {
                 new bootstrap.Modal(document.getElementById('adminKeyModal')).show();
+            } else if (urlParams.get('cart') === 'open') {
+                new bootstrap.Modal(document.getElementById('cartModal')).show();
+            } else if (urlParams.has('product')) {
+                const prodId = parseInt(urlParams.get('product'));
+                if(!isNaN(prodId)) openProductDetail(prodId);
             }
             
             checkLoginStatus();
+
+            // Modal kapanınca URL'yi temizle
+            document.getElementById('productDetailModal').addEventListener('hidden.bs.modal', function () {
+                 window.history.pushState({}, '', window.location.pathname);
+            });
+            document.getElementById('cartModal').addEventListener('hidden.bs.modal', function () {
+                 window.history.pushState({}, '', window.location.pathname);
+            });
         });
 
-        // --- BULUT SİSTEMİ (JSONBIN) ---
-        async function loadFromCloud() {
-            if(BIN_ID === "BURAYA_BIN_ID_YAZ") return; // ID girilmemişse varsayılanlarla devam et
+        // Tarayıcı Geri Tuşu Desteği
+        window.addEventListener('popstate', function(event) {
+            const modalEl = document.getElementById('productDetailModal');
+            const cartEl = document.getElementById('cartModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            const cartModal = bootstrap.Modal.getInstance(cartEl);
+            if (modal) modal.hide();
+            if (cartModal) cartModal.hide();
             
+            // Eğer geçmişte state varsa (ürün id vs) tekrar açabiliriz ama 
+            // şimdilik sadece kapatmak daha temiz bir deneyim sunar.
+        });
+
+        async function loadFromCloud() {
+            if(BIN_ID === "BURAYA_BIN_ID_YAZ") return;
             try {
                 let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`);
                 if(response.ok) {
                     let data = await response.json();
                     let rec = data.record;
-                    
                     if(rec.siteSettings) siteSettings = rec.siteSettings;
-                    
-                    // Sadece bulutta veri varsa güncelle, yoksa eskiler kalsın
                     if(rec.banners && rec.banners.length > 0) banners = rec.banners;
                     if(rec.categories && rec.categories.length > 0) categories = rec.categories;
                     if(rec.products && rec.products.length > 0) products = rec.products;
 
                     console.log("Veriler yüklendi!");
-                    // Ekranı güncelle
                     updateUI(); 
                     renderCarousel(); 
                     renderSidebarFilters(); 
                     renderProducts();
                     renderAdminProductList(); renderAdminCategories(); renderMainCatSelect(); renderAdminBanners();
-
-                    // URL'de ürün varsa aç
+                    
+                    // Veriler geç yüklenirse ve URL'de ürün varsa tekrar dene
                     const urlParams = new URLSearchParams(window.location.search);
                     if(urlParams.has('product')) {
                         const prodId = parseInt(urlParams.get('product'));
-                        if(!isNaN(prodId)) openProductDetail(prodId);
+                        if(!isNaN(prodId) && products.find(p=>p.id===prodId)) openProductDetail(prodId);
                     }
                 }
             } catch (err) { console.error("Bulut hatası:", err); }
         }
 
-        // --- ÜRÜN LİSTELEME (DÜZELTİLDİ: SAYFA YENİLENMEZ) ---
         function renderProducts(){
             const l=document.getElementById('productList');l.innerHTML="";
             let min=parseFloat(document.getElementById('minPriceInput').value)||0;
@@ -385,7 +401,6 @@
             
             filtered.forEach(p=>{
                 let oldPriceDisplay=p.marketPrice>p.price?`<span class="old-price">${p.marketPrice} TL</span>`:"";
-                // LİNK YOK, ONCLICK VAR (Yenileme yapmaz)
                 l.innerHTML+=`
                 <div class="col">
                     <div class="card product-card">
@@ -403,7 +418,8 @@
                 </div>`
             });
         }
-    async function saveToCloud() {
+        
+        async function saveToCloud() {
             if (!API_KEY) return alert("Hata: Admin yetkisi yok, kaydedilemedi!");
             const payload = { siteSettings, banners, categories, products, admin_modu: true };
             try {
@@ -412,19 +428,12 @@
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
                     body: JSON.stringify(payload)
                 });
-
-                // HACI DEĞİŞİKLİK BURADA:
-                // Uyarıyı (Alert) sildim, yerine sessizce console'a yazıyor.
                 if (response.ok || response.status === 504) {
-                    console.log("✅ Değişiklikler Buluta Kaydedildi!");
-                } 
-                else {
-                    // Gerçekten bir sorun varsa hata kodunu da gösterelim ki anlayalım.
-                    alert("❌ Kayıt başarısız! Hata Kodu: " + response.status);
+                    console.log("✅ Kaydedildi!");
+                } else {
+                    console.error("Kayıt başarısız! Kod: " + response.status);
                 }
-            } catch (err) {
-                alert("Hata: " + err);
-            }
+            } catch (err) { console.error("Hata:", err); }
         }
 
         async function verifyAdminKey() {
@@ -441,13 +450,10 @@
                     document.getElementById('inputColor').value = rootStyles.getPropertyValue('--primary-color').trim();
                     document.getElementById('inputSecColor').value = rootStyles.getPropertyValue('--secondary-color').trim();
                     document.getElementById('inputBgColor').value = rootStyles.getPropertyValue('--bg-color').trim();
-                    
-                    // Giriş Başarılı uyarısı silindi
                 } else { alert("Yanlış Key!"); }
             } catch (error) { alert("Hata: " + error); }
         }
 
-        // --- DİĞER FONKSİYONLAR ---
         document.getElementById('addBannerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const img = document.getElementById('bannerImgBase64').value;
@@ -489,7 +495,6 @@
 
         function saveSiteSettings(){ siteSettings.whatsapp=document.getElementById('inputWhatsapp').value; siteSettings.accountName=document.getElementById('inputAccountName').value; siteSettings.iban=document.getElementById('inputIban').value; siteSettings.address=document.getElementById('inputAddress').value; siteSettings.aboutText=document.getElementById('inputAboutText').value; siteSettings.contactText=document.getElementById('inputContactText').value; document.documentElement.style.setProperty('--primary-color',document.getElementById('inputColor').value); document.documentElement.style.setProperty('--secondary-color',document.getElementById('inputSecColor').value); document.documentElement.style.setProperty('--bg-color',document.getElementById('inputBgColor').value); document.title=document.getElementById('inputSiteName').value+" - Mağaza"; updateUI(); bootstrap.Modal.getInstance(document.getElementById('adminModal')).hide(); saveToCloud(); }
 
-        // --- YARDIMCI FONKSİYONLAR ---
         function renderCarousel() {
             const inner = document.getElementById('carouselInner');
             const indicators = document.getElementById('carouselIndicators');
@@ -502,52 +507,79 @@
         }
 
         document.getElementById('prodImgFile').addEventListener('change', function(e) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = function(ev) { const i = new Image(); i.onload = function() { const c = document.createElement('canvas'); const ctx = c.getContext('2d'); let w = i.width; let h = i.height; if(w>800){h*=800/w;w=800;} c.width=w; c.height=h; ctx.drawImage(i,0,0,w,h); tempImages.push(c.toDataURL('image/jpeg', 0.7)); renderAdminImagePreviews(); }; i.src = ev.target.result; }; r.readAsDataURL(f); } });
-        // KALİTEYİ BOZMADAN SADECE BOYUTU DENGELEYEN KOD
-document.getElementById('bannerImgFile').addEventListener('change', function(e) {
-    const f = e.target.files[0];
-    if (!f) return;
+        
+        document.getElementById('bannerImgFile').addEventListener('change', function(e) {
+            const f = e.target.files[0];
+            if (!f) return;
+            const formData = new FormData();
+            formData.append("image", f);
+            const API_KEY = '8a0805cddea15f4c64b848a57d903133'; 
 
-    // Resim Yükleniyor Uyarısı SİLİNDİ
-
-    const formData = new FormData();
-    formData.append("image", f);
-
-    // BURAYA DİKKAT: ImgBB'den aldığın API Key'i tırnakların içine yapıştır!
-    const API_KEY = '8a0805cddea15f4c64b848a57d903133'; 
-
-    fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.success) {
-            // İşte sihir burada: Bize resmin kendisi değil, adresi (linki) geliyor.
-            const resimLinki = result.data.url;
-            
-            // Linki gizli kutuya yazıyoruz. 
-            // "Ekle" butonuna bastığında artık devasa kodlar değil, bu kısacık link kaydedilecek.
-            document.getElementById('bannerImgBase64').value = resimLinki;
-            
-            // Başarılı yüklendi uyarısı SİLİNDİ
-            console.log("Resim Linki:", resimLinki); 
-        } else {
-            alert("❌ Hata: API Anahtarın yanlış olabilir mi?");
-        }
-    })
-    .catch(error => {
-        console.error('Hata:', error);
-        alert("❌ Sunucu hatası! İnternet bağlantını kontrol et.");
-    });
-});
+            fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, { method: 'POST', body: formData })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    const resimLinki = result.data.url;
+                    document.getElementById('bannerImgBase64').value = resimLinki;
+                    console.log("Resim Linki:", resimLinki); 
+                } else { alert("❌ Hata: API Anahtarın yanlış olabilir mi?"); }
+            })
+            .catch(error => { console.error('Hata:', error); alert("❌ Sunucu hatası!"); });
+        });
+        
         function renderAdminImagePreviews() { const c = document.getElementById('prodImagePreviewContainer'); c.innerHTML = ""; tempImages.forEach((img, idx) => { c.innerHTML += `<div style="display:inline-block; position:relative; margin-right:5px;"><img src="${img}" class="admin-img-preview-item"><span style="position:absolute; top:0; left:0; background:black; color:white; font-size:10px; padding:2px;">No: ${idx+1}</span><i class="fas fa-times text-danger" style="position:absolute; top:0; right:0; cursor:pointer; background:white; border-radius:50%;" onclick="removeTempImage(${idx})"></i></div>`; }); }
         function removeTempImage(idx) { tempImages.splice(idx, 1); renderAdminImagePreviews(); }
         function generateVariantTable() { const colors = document.getElementById('prodColors').value.split(',').map(s=>s.trim()).filter(s=>s); const sizes = document.getElementById('prodSizes').value.split(',').map(s=>s.trim()).filter(s=>s); document.getElementById('variantTableBody').innerHTML = ""; if(colors.length === 0 && sizes.length === 0) { addVariantRow("-", "-", 0, 0, 10, 1); } else { const cList = colors.length ? colors : ["-"]; const sList = sizes.length ? sizes : ["-"]; cList.forEach(c => { sList.forEach(s => { addVariantRow(c, s, 0, 0, 10, 1); }); }); } }
         function addVariantRow(c, s, mp, p, stk, imgIdx) { document.getElementById('variantTableBody').innerHTML += `<tr data-color="${c}" data-size="${s}" class="variant-row"><td>${c} / ${s}</td><td><input type="number" class="form-control form-control-sm v-mp" value="${mp}" placeholder="Piyasa"></td><td><input type="number" class="form-control form-control-sm v-p" value="${p}" placeholder="Satış"></td><td><input type="number" class="form-control form-control-sm v-stk" value="${stk}"></td><td><input type="number" class="form-control form-control-sm v-img" value="${imgIdx}" min="1"></td></tr>`; }
-        function openProductDetail(id) { const p = products.find(x => x.id === id); if(!p) return; currentDetailId = p.id; document.getElementById('detailTitle').innerText = p.name; document.getElementById('detailBrand').innerText = p.brand || ""; document.getElementById('detailModelCode').innerText = p.modelCode || ""; document.getElementById('detailDesc').innerText = p.desc || ""; document.getElementById('detailMaterial').innerText = p.material || "-"; document.getElementById('detailOrigin').innerText = p.origin || "TR"; document.getElementById('detailAge').innerText = p.ageGroup || "-"; document.getElementById('detailCatBadge').innerText = p.category; const mainImg = document.getElementById('detailImg'); const gallery = document.getElementById('detailGallery'); gallery.innerHTML = ""; p.images.forEach((img, idx) => { gallery.innerHTML += `<img src="${img}" class="gallery-thumb ${idx===0?'active':''}" onclick="changeDetailImage('${img}', this)">`; }); mainImg.src = p.images[0]; const colorDiv = document.getElementById('colorDiv'); const colorSelect = document.getElementById('detailColorSelect'); const sizeDiv = document.getElementById('sizeDiv'); const sizeSelect = document.getElementById('detailSizeSelect'); colorSelect.innerHTML = p.colors.length ? p.colors.map(c => `<option value="${c}">${c}</option>`).join('') : ""; sizeSelect.innerHTML = p.sizes.length ? p.sizes.map(s => `<option value="${s}">${s}</option>`).join('') : ""; colorDiv.style.display = p.colors.length ? 'block' : 'none'; sizeDiv.style.display = p.sizes.length ? 'block' : 'none'; colorSelect.onchange = updateDetailView; sizeSelect.onchange = updateDetailView; updateDetailView(); new bootstrap.Modal(document.getElementById('productDetailModal')).show(); }
+        
+        function openProductDetail(id) { 
+            const p = products.find(x => x.id === id); 
+            if(!p) return; 
+            currentDetailId = p.id; 
+            
+            // LİNK GÜNCELLEME (Sanki yeni sayfa gibi)
+            const newUrl = `${window.location.pathname}?product=${id}`;
+            window.history.pushState({id: id}, '', newUrl);
+
+            document.getElementById('detailTitle').innerText = p.name; 
+            document.getElementById('detailBrand').innerText = p.brand || ""; 
+            document.getElementById('detailModelCode').innerText = p.modelCode || ""; 
+            document.getElementById('detailDesc').innerText = p.desc || ""; 
+            document.getElementById('detailMaterial').innerText = p.material || "-"; 
+            document.getElementById('detailOrigin').innerText = p.origin || "TR"; 
+            document.getElementById('detailAge').innerText = p.ageGroup || "-"; 
+            document.getElementById('detailCatBadge').innerText = p.category; 
+            const mainImg = document.getElementById('detailImg'); 
+            const gallery = document.getElementById('detailGallery'); 
+            gallery.innerHTML = ""; 
+            p.images.forEach((img, idx) => { gallery.innerHTML += `<img src="${img}" class="gallery-thumb ${idx===0?'active':''}" onclick="changeDetailImage('${img}', this)">`; }); 
+            mainImg.src = p.images[0]; 
+            const colorDiv = document.getElementById('colorDiv'); 
+            const colorSelect = document.getElementById('detailColorSelect'); 
+            const sizeDiv = document.getElementById('sizeDiv'); 
+            const sizeSelect = document.getElementById('detailSizeSelect'); 
+            colorSelect.innerHTML = p.colors.length ? p.colors.map(c => `<option value="${c}">${c}</option>`).join('') : ""; 
+            sizeSelect.innerHTML = p.sizes.length ? p.sizes.map(s => `<option value="${s}">${s}</option>`).join('') : ""; 
+            colorDiv.style.display = p.colors.length ? 'block' : 'none'; 
+            sizeDiv.style.display = p.sizes.length ? 'block' : 'none'; 
+            colorSelect.onchange = updateDetailView; 
+            sizeSelect.onchange = updateDetailView; 
+            updateDetailView(); 
+            new bootstrap.Modal(document.getElementById('productDetailModal')).show(); 
+        }
+
+        function openCartModal() {
+            // LİNK GÜNCELLEME
+            const newUrl = `${window.location.pathname}?cart=open`;
+            window.history.pushState({cart: true}, '', newUrl);
+            
+            renderCart();
+            new bootstrap.Modal(document.getElementById('cartModal')).show();
+        }
+
         function changeDetailImage(src, el) { document.getElementById('detailImg').src = src; document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active')); el.classList.add('active'); }
         function updateDetailView() { const p = products.find(x => x.id === currentDetailId); const selectedColor = p.colors.length ? document.getElementById('detailColorSelect').value : "-"; const selectedSize = p.sizes.length ? document.getElementById('detailSizeSelect').value : "-"; const variant = p.variants.find(v => v.color === selectedColor && v.size === selectedSize); if (variant) { document.getElementById('detailPrice').innerText = variant.price + " TL"; if(variant.marketPrice > variant.price) { document.getElementById('detailOldPrice').innerText = variant.marketPrice + " TL"; document.getElementById('detailOldPrice').style.display = 'inline'; } else { document.getElementById('detailOldPrice').style.display = 'none'; } const stockBadge = document.getElementById('detailStockStatus'); if(variant.stock > 0) { stockBadge.innerHTML = `<i class="fas fa-check-circle"></i> Stokta Var (${variant.stock})`; stockBadge.className = "small text-success fw-bold"; } else { stockBadge.innerHTML = `<i class="fas fa-times-circle"></i> Tükendi`; stockBadge.className = "small text-danger fw-bold"; } if(variant.imgIndex >= 0 && variant.imgIndex < p.images.length) { const thumbs = document.querySelectorAll('.gallery-thumb'); if(thumbs[variant.imgIndex]) thumbs[variant.imgIndex].click(); } } }
-        function addToCartFromDetail() { const p = products.find(x => x.id === currentDetailId); const cVal = p.colors.length ? document.getElementById('detailColorSelect').value : "-"; const sVal = p.sizes.length ? document.getElementById('detailSizeSelect').value : "-"; const variant = p.variants.find(v => v.color === cVal && v.size === sVal); if(!variant || variant.stock <= 0) return alert("Bu seçenek stokta yok!"); const varLabel = (cVal!=="-" || sVal!=="-") ? `${cVal} - ${sVal}` : ""; let existing = cart.find(i => i.id === p.id && i.variantLabel === varLabel); if(existing) existing.qty++; else cart.push({ id: p.id, qty: 1, variantLabel: varLabel, price: variant.price, image: p.images[variant.imgIndex] || p.images[0] }); updateCartCount(); bootstrap.Modal.getInstance(document.getElementById('productDetailModal')).hide(); /* Sepete eklendi uyarısı SİLİNDİ */ }
+        function addToCartFromDetail() { const p = products.find(x => x.id === currentDetailId); const cVal = p.colors.length ? document.getElementById('detailColorSelect').value : "-"; const sVal = p.sizes.length ? document.getElementById('detailSizeSelect').value : "-"; const variant = p.variants.find(v => v.color === cVal && v.size === sVal); if(!variant || variant.stock <= 0) return alert("Bu seçenek stokta yok!"); const varLabel = (cVal!=="-" || sVal!=="-") ? `${cVal} - ${sVal}` : ""; let existing = cart.find(i => i.id === p.id && i.variantLabel === varLabel); if(existing) existing.qty++; else cart.push({ id: p.id, qty: 1, variantLabel: varLabel, price: variant.price, image: p.images[variant.imgIndex] || p.images[0] }); updateCartCount(); bootstrap.Modal.getInstance(document.getElementById('productDetailModal')).hide(); }
         function renderAdminProductList() { const t = document.getElementById('adminProductTable'); t.innerHTML=""; products.forEach((p,i)=>{ t.innerHTML+=`<tr><td><img src="${p.images[0]}" style="width:40px"></td><td>${p.name}</td><td>${p.price} TL</td><td>Stoklar Varyantlı</td><td><button class="btn btn-sm btn-warning me-1" onclick="editProduct(${p.id})"><i class="fas fa-pen"></i></button><button class="btn btn-sm btn-danger" onclick="deleteProduct(${i})"><i class="fas fa-trash"></i></button></td></tr>` }); }
         function editProduct(id) { const p = products.find(x => x.id === id); if(!p) return; document.getElementById('editProductId').value = p.id; document.getElementById('prodName').value = p.name; document.getElementById('prodBrand').value = p.brand; document.getElementById('prodModelCode').value = p.modelCode; document.getElementById('prodMainCat').value = p.category; renderSubCatSelect(); document.getElementById('prodSubCat').value = p.subCategory || ""; document.getElementById('prodMaterial').value = p.material; document.getElementById('prodOrigin').value = p.origin; document.getElementById('prodAgeGroup').value = p.ageGroup; document.getElementById('prodDesc').value = p.desc; document.getElementById('prodColors').value = p.colors.join(', '); document.getElementById('prodSizes').value = p.sizes.join(', '); tempImages = [...p.images]; renderAdminImagePreviews(); const tbody = document.getElementById('variantTableBody'); tbody.innerHTML = ""; p.variants.forEach(v => { addVariantRow(v.color, v.size, v.marketPrice, v.price, v.stock, v.imgIndex + 1); }); document.getElementById('formTitle').innerText = "Ürünü Düzenle"; document.getElementById('cancelEditBtn').style.display = 'block'; document.getElementById('adminTabs').scrollIntoView(); }
         function resetProductForm() { document.getElementById('addProductForm').reset(); document.getElementById('editProductId').value = ""; tempImages = []; renderAdminImagePreviews(); document.getElementById('variantTableBody').innerHTML = ""; document.getElementById('formTitle').innerText = "Ürün Ekleme"; document.getElementById('saveProductBtn').innerText = "Kaydet"; document.getElementById('cancelEditBtn').style.display = 'none'; }
@@ -567,13 +599,18 @@ document.getElementById('bannerImgFile').addEventListener('change', function(e) 
         function updateCartCount(){document.getElementById('cartCount').innerText=cart.reduce((a,b)=>a+b.qty,0)}
         function checkoutWhatsapp(){if(cart.length===0)return alert("Sepet boş!");let msg="",isValid=true;if(activeCustomerType==='individual'){const name=document.getElementById('indName').value,surname=document.getElementById('indSurname').value,phone=document.getElementById('indPhone').value,addr=document.getElementById('indAddress').value;if(!name||!surname||!phone||!addr)isValid=false;msg=`*--- [ BİREYSEL SİPARİŞ ] ---*\n👤 ${name} ${surname}\n📞 ${phone}\n📍 ${addr}`}else{const comp=document.getElementById('corpName').value,phone=document.getElementById('corpPhone').value,addr=document.getElementById('corpAddress').value;if(!comp||!phone||!addr)isValid=false;msg=`*--- [ KURUMSAL SİPARİŞ ] ---*\n🏢 ${comp}\n📞 ${phone}\n📍 ${addr}`}if(!isValid)return alert("Bilgileri doldurun!");msg+=`\n\n*--- SİPARİŞ LİSTESİ ---*`;let total=0;cart.forEach(c=>{let p=products.find(x=>x.id===c.id);if(p){let varText=c.variantLabel?` [${c.variantLabel}]`:"";msg+=`\n📦 ${c.qty}x ${p.name}${varText} (${c.price*c.qty} TL)`;total+=c.price*c.qty}});msg+=`\n----------------\n💰 *TOPLAM: ${total} TL*\n✅ Ödeme Yapıldı.`;window.open(`https://wa.me/${siteSettings.whatsapp}?text=${encodeURIComponent(msg)}`,'_blank')}
         function renderAdminBanners() { const t = document.getElementById('adminBannerTable'); t.innerHTML = ""; banners.forEach((b, i) => { t.innerHTML += `<tr><td><img src="${b.img}" style="height:40px; border-radius:4px;"></td><td>${b.title}</td><td><button class="btn btn-sm btn-danger" onclick="deleteBanner(${i})"><i class="fas fa-trash"></i></button></td></tr>`; }); }
-        function saveSiteSettings(){ siteSettings.whatsapp=document.getElementById('inputWhatsapp').value; siteSettings.accountName=document.getElementById('inputAccountName').value; siteSettings.iban=document.getElementById('inputIban').value; siteSettings.address=document.getElementById('inputAddress').value; siteSettings.aboutText=document.getElementById('inputAboutText').value; siteSettings.contactText=document.getElementById('inputContactText').value; document.documentElement.style.setProperty('--primary-color',document.getElementById('inputColor').value); document.documentElement.style.setProperty('--secondary-color',document.getElementById('inputSecColor').value); document.documentElement.style.setProperty('--bg-color',document.getElementById('inputBgColor').value); document.title=document.getElementById('inputSiteName').value+" - Mağaza"; updateUI(); bootstrap.Modal.getInstance(document.getElementById('adminModal')).hide(); saveToCloud(); }
+        
         function toggleCustomerType(t){activeCustomerType=t;if(t==='individual'){document.getElementById('btnIndividual').classList.add('active');document.getElementById('btnCorporate').classList.remove('active');document.getElementById('individualForm').style.display='flex';document.getElementById('corporateForm').style.display='none'}else{document.getElementById('btnCorporate').classList.add('active');document.getElementById('btnIndividual').classList.remove('active');document.getElementById('corporateForm').style.display='flex';document.getElementById('individualForm').style.display='none'}}
         function toggleBilling(t){const c=document.getElementById(t==='individual'?'indSameAddress':'corpSameAddress').checked;const d=document.getElementById(t==='individual'?'indAddress':'corpAddress').value;const bDiv=document.getElementById(t==='individual'?'indBillingDiv':'corpBillingDiv');const bInp=document.getElementById(t==='individual'?'indBillingAddress':'corpBillingAddress');if(c){bDiv.style.display='none';bInp.value=d}else{bDiv.style.display='block';bInp.value=""}}
-        document.getElementById('registerForm').addEventListener('submit',function(e){e.preventDefault();const u={name:document.getElementById('regName').value,phone:document.getElementById('regPhone').value,email:document.getElementById('regEmail').value,pass:document.getElementById('regPass').value,address:document.getElementById('regAddress').value};if(prompt("Doğrulama (1234):")==="1234"){localStorage.setItem('user_'+u.email,JSON.stringify(u)); /* Kayıt OK uyarısı SİLİNDİ */ bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide()}else alert("Hata")});
+        document.getElementById('registerForm').addEventListener('submit',function(e){e.preventDefault();const u={name:document.getElementById('regName').value,phone:document.getElementById('regPhone').value,email:document.getElementById('regEmail').value,pass:document.getElementById('regPass').value,address:document.getElementById('regAddress').value};if(prompt("Doğrulama (1234):")==="1234"){localStorage.setItem('user_'+u.email,JSON.stringify(u)); bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide()}else alert("Hata")});
         document.getElementById('loginForm').addEventListener('submit',function(e){e.preventDefault();const u=JSON.parse(localStorage.getItem('user_'+document.getElementById('loginEmail').value));if(u&&u.pass===document.getElementById('loginPass').value){currentUser=u;localStorage.setItem('session',JSON.stringify(u));checkLoginStatus();bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide()}else alert("Hata")});
         function checkLoginStatus(){currentUser=JSON.parse(localStorage.getItem('session'));if(currentUser){document.getElementById('guestMenu').style.display='none';document.getElementById('userMenu').style.display='block';document.getElementById('navUserName').innerText=currentUser.name}else{document.getElementById('guestMenu').style.display='block';document.getElementById('userMenu').style.display='none'}}
         function logoutUser(){localStorage.removeItem('session');currentUser=null;window.location.reload()}
+        
+        // ADMIN PANELİNİ YENİ SEKMEDE AÇMA FONKSİYONU
+        function openAdminInNewTab() {
+            window.open('?panel=3gen', '_blank');
+        }
     </script>
 </body>
 </html>
