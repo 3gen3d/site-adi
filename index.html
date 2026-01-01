@@ -606,7 +606,31 @@
         function editSubCategory(mi,si){const n=prompt("Adı:",categories[mi].sub[si]);if(n){categories[mi].sub[si]=n;refreshAllCats(); saveToCloud();}}
         function moveCategory(i,d){ if(d===-1&&i>0)[categories[i],categories[i-1]]=[categories[i-1],categories[i]]; else if(d===1&&i<categories.length-1)[categories[i],categories[i+1]]=[categories[i+1],categories[i]]; refreshAllCats(); saveToCloud(); }
 
-        function saveSiteSettings(){ siteSettings.whatsapp=document.getElementById('inputWhatsapp').value; siteSettings.accountName=document.getElementById('inputAccountName').value; siteSettings.iban=document.getElementById('inputIban').value; siteSettings.address=document.getElementById('inputAddress').value; siteSettings.aboutText=document.getElementById('inputAboutText').value; siteSettings.contactText=document.getElementById('inputContactText').value; document.documentElement.style.setProperty('--primary-color',document.getElementById('inputColor').value); document.documentElement.style.setProperty('--secondary-color',document.getElementById('inputSecColor').value); document.documentElement.style.setProperty('--bg-color',document.getElementById('inputBgColor').value); document.title=document.getElementById('inputSiteName').value+" - Mağaza"; updateUI(); saveToCloud(); }
+        function saveSiteSettings() {
+            // 1. Formdaki verileri alıyoruz
+            siteSettings.whatsapp = document.getElementById('inputWhatsapp').value;
+            siteSettings.accountName = document.getElementById('inputAccountName').value;
+            siteSettings.iban = document.getElementById('inputIban').value;
+            siteSettings.address = document.getElementById('inputAddress').value;
+            siteSettings.aboutText = document.getElementById('inputAboutText').value;
+            siteSettings.contactText = document.getElementById('inputContactText').value;
+
+            // 2. Renkleri sisteme işliyoruz
+            document.documentElement.style.setProperty('--primary-color', document.getElementById('inputColor').value);
+            document.documentElement.style.setProperty('--secondary-color', document.getElementById('inputSecColor').value);
+            document.documentElement.style.setProperty('--bg-color', document.getElementById('inputBgColor').value);
+        
+            // 3. Tarayıcı başlığını güncelliyoruz
+            document.title = document.getElementById('inputSiteName').value + " - Mağaza";
+        
+            // 4. Site üzerindeki yazıları yeniliyoruz
+            updateUI();
+        
+            // 5. DİKKAT: Modalı kapatma kodunu bilerek koymadım. Panel açık kalacak.
+            
+            // 6. Son olarak buluta kaydediyoruz
+            saveToCloud();
+        }
 
         // --- YARDIMCI FONKSİYONLAR ---
         function renderCarousel() {
@@ -725,4 +749,5 @@
     </script>
 </body>
 </html>
+
 
