@@ -606,7 +606,7 @@
         function editSubCategory(mi,si){const n=prompt("Adı:",categories[mi].sub[si]);if(n){categories[mi].sub[si]=n;refreshAllCats(); saveToCloud();}}
         function moveCategory(i,d){ if(d===-1&&i>0)[categories[i],categories[i-1]]=[categories[i-1],categories[i]]; else if(d===1&&i<categories.length-1)[categories[i],categories[i+1]]=[categories[i+1],categories[i]]; refreshAllCats(); saveToCloud(); }
 
-        function saveSiteSettings(){ siteSettings.whatsapp=document.getElementById('inputWhatsapp').value; siteSettings.accountName=document.getElementById('inputAccountName').value; siteSettings.iban=document.getElementById('inputIban').value; siteSettings.address=document.getElementById('inputAddress').value; siteSettings.aboutText=document.getElementById('inputAboutText').value; siteSettings.contactText=document.getElementById('inputContactText').value; document.documentElement.style.setProperty('--primary-color',document.getElementById('inputColor').value); document.documentElement.style.setProperty('--secondary-color',document.getElementById('inputSecColor').value); document.documentElement.style.setProperty('--bg-color',document.getElementById('inputBgColor').value); document.title=document.getElementById('inputSiteName').value+" - Mağaza"; updateUI(); bootstrap.Modal.getInstance(document.getElementById('adminModal')).hide(); saveToCloud(); }
+        function saveSiteSettings(){ siteSettings.whatsapp=document.getElementById('inputWhatsapp').value; siteSettings.accountName=document.getElementById('inputAccountName').value; siteSettings.iban=document.getElementById('inputIban').value; siteSettings.address=document.getElementById('inputAddress').value; siteSettings.aboutText=document.getElementById('inputAboutText').value; siteSettings.contactText=document.getElementById('inputContactText').value; document.documentElement.style.setProperty('--primary-color',document.getElementById('inputColor').value); document.documentElement.style.setProperty('--secondary-color',document.getElementById('inputSecColor').value); document.documentElement.style.setProperty('--bg-color',document.getElementById('inputBgColor').value); document.title=document.getElementById('inputSiteName').value+" - Mağaza"; updateUI(); saveToCloud(); }
 
         // --- YARDIMCI FONKSİYONLAR ---
         function renderCarousel() {
@@ -725,3 +725,4 @@
     </script>
 </body>
 </html>
+
