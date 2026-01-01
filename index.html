@@ -89,6 +89,31 @@
         .nav-tabs .nav-link { color: var(--secondary-color); }
         .cat-admin-item { background: #fff; border-left: 4px solid #ddd; padding: 10px; margin-bottom: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .sub-cat-badge { font-size: 0.8rem; background: #e9ecef; padding: 2px 8px; border-radius: 12px; margin-right: 5px; display: inline-block; margin-top: 5px; }
+
+        /* YENİ: Geri Tuşu Şıklığı (Mobil uyumlu) */
+        .modal-back-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 1050;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modal-back-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
@@ -108,7 +133,7 @@
                         <ul class="dropdown-menu"><li><a class="dropdown-item text-danger" href="#" onclick="logoutUser()">Çıkış Yap</a></li></ul>
                     </li>
                     <li class="nav-item position-relative">
-                        <a class="nav-link text-primary" href="#" data-bs-toggle="modal" data-bs-target="#cartModal" onclick="renderCart()">
+                        <a class="nav-link text-primary" href="#" onclick="openCartModal()">
                             <i class="fas fa-shopping-cart fa-lg"></i> <span class="cart-badge" id="cartCount">0</span>
                         </a>
                     </li>
@@ -150,7 +175,13 @@
             <div class="row justify-content-center mb-4">
                 <div class="col-md-6"><h5 class="fw-bold mb-3" style="color: var(--primary-color);">İletişim Bilgileri</h5><p class="mb-1"><i class="fas fa-map-marker-alt me-2"></i> <span id="footerAddress">...</span></p><p><i class="fas fa-phone me-2"></i> <span id="footerPhone">...</span></p></div>
             </div>
-            <div class="text-muted small">2025 © <span id="footerCopyrightName">3Gen3D</span> - Tüm Hakları Saklıdır.</div>
+            <div class="text-muted small">
+                2025 © 
+                <a href="?panel=3gen" target="_blank" style="text-decoration:none; color:inherit; cursor:pointer;" title="Yönetici Girişi">
+                    <span id="footerCopyrightName">3Gen3D</span>
+                </a> 
+                - Tüm Hakları Saklıdır.
+            </div>
         </div>
     </footer>
 
@@ -174,7 +205,11 @@
 
     <div class="modal fade" id="infoModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title fw-bold" id="infoModalTitle"></h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body" id="infoModalBody" style="white-space: pre-wrap;"></div></div></div></div>
     
-    <div class="modal fade" id="productDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content" style="border-radius: 12px; overflow: hidden;">
+    <div class="modal fade" id="productDetailModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content" style="border-radius: 12px; overflow: hidden; position: relative;">
+        <div class="modal-back-btn" onclick="history.back()" title="Geri Dön">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        
         <div class="modal-header border-0"><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body pb-4">
             <div class="row">
@@ -219,7 +254,10 @@
 
     <div class="modal fade" id="loginModal" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Giriş Yap</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="loginForm"><input type="email" class="form-control mb-3" id="loginEmail" placeholder="E-posta" required><input type="password" class="form-control mb-3" id="loginPass" placeholder="Şifre" required><button type="submit" class="btn btn-primary-custom w-100">Giriş</button></form><div class="text-center mt-3"><a href="#" data-bs-toggle="modal" data-bs-target="#registerModal">Kayıt Ol</a></div></div></div></div></div>
     <div class="modal fade" id="registerModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Kayıt Ol</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><form id="registerForm"><div class="row g-3"><div class="col-6"><input type="text" class="form-control" id="regName" placeholder="Ad Soyad" required></div><div class="col-6"><input type="tel" class="form-control" id="regPhone" placeholder="Telefon" required></div><div class="col-6"><input type="email" class="form-control" id="regEmail" placeholder="E-posta" required></div><div class="col-6"><input type="password" class="form-control" id="regPass" placeholder="Şifre" required></div><div class="col-12"><textarea class="form-control" id="regAddress" placeholder="Teslimat Adresi" required></textarea></div><button type="submit" class="btn btn-success mt-3 w-100">Kayıt Ol</button></div></form></div></div></div></div>
-    <div class="modal fade" id="cartModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Sepetim</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div id="emptyCartMsg" class="text-center py-5" style="display:none;"><i class="fas fa-shopping-basket fa-3x text-muted mb-3"></i><p>Sepet boş.</p></div><div id="cartContent"><div id="cartItemsList"></div><div class="text-end fw-bold fs-5 mt-3 text-primary">Toplam: <span id="cartTotal">0 TL</span></div><hr><div class="customer-type-selector"><div class="type-btn active" id="btnIndividual" onclick="toggleCustomerType('individual')"><i class="fas fa-user"></i> Bireysel</div><div class="type-btn" id="btnCorporate" onclick="toggleCustomerType('corporate')"><i class="fas fa-building"></i> Kurumsal</div></div><form id="individualForm" class="row g-3"><div class="col-6"><input type="text" class="form-control" id="indName" placeholder="Ad" required></div><div class="col-6"><input type="text" class="form-control" id="indSurname" placeholder="Soyad" required></div><div class="col-6"><input type="tel" class="form-control" id="indPhone" placeholder="Telefon" required></div><div class="col-6"><input type="email" class="form-control" id="indEmail" placeholder="E-posta" required></div><div class="col-12"><textarea class="form-control" id="indAddress" placeholder="Teslimat Adresi" required></textarea></div><div class="col-12"><div class="form-check bg-light p-2 border"><input class="form-check-input" type="checkbox" id="indSameAddress" onchange="toggleBilling('individual')"><label class="form-check-label">Fatura adresi aynı olsun</label></div></div><div class="col-12" id="indBillingDiv"><textarea class="form-control" id="indBillingAddress" placeholder="Fatura Adresi"></textarea></div></form><form id="corporateForm" class="row g-3" style="display:none;"><div class="col-12"><input type="text" class="form-control" id="corpName" placeholder="Şirket İsmi" required></div><div class="col-6"><input type="tel" class="form-control" id="corpPhone" placeholder="Telefon" required></div><div class="col-6"><input type="email" class="form-control" id="corpEmail" placeholder="E-posta" required></div><div class="col-12"><textarea class="form-control" id="corpAddress" placeholder="Teslimat Adresi" required></textarea></div><div class="col-12"><div class="form-check bg-light p-2 border"><input class="form-check-input" type="checkbox" id="corpSameAddress" onchange="toggleBilling('corporate')"><label class="form-check-label">Fatura adresi aynı olsun</label></div></div><div class="col-12" id="corpBillingDiv"><textarea class="form-control" id="corpBillingAddress" placeholder="Fatura Adresi"></textarea></div></form><div class="alert alert-warning mt-3 p-2 small"><strong>IBAN:</strong> <span id="displayIban"></span><br><strong>Alıcı:</strong> <span id="displayAccountName"></span></div></div></div><div class="modal-footer"><button class="btn btn-success w-100 py-2" onclick="checkoutWhatsapp()"><i class="fab fa-whatsapp"></i> Siparişi Tamamla</button></div></div></div></div>
+    
+    <div class="modal fade" id="cartModal" tabindex="-1"><div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content">
+        <div class="modal-back-btn ms-2 mt-2" onclick="history.back()" title="Geri Dön" style="position:relative; top:0; left:0; width:30px; height:30px; display:inline-flex; border:none; box-shadow:none;"><i class="fas fa-arrow-left"></i></div>
+        <div class="modal-header border-0 pt-0"><h5 class="modal-title">Sepetim</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div id="emptyCartMsg" class="text-center py-5" style="display:none;"><i class="fas fa-shopping-basket fa-3x text-muted mb-3"></i><p>Sepet boş.</p></div><div id="cartContent"><div id="cartItemsList"></div><div class="text-end fw-bold fs-5 mt-3 text-primary">Toplam: <span id="cartTotal">0 TL</span></div><hr><div class="customer-type-selector"><div class="type-btn active" id="btnIndividual" onclick="toggleCustomerType('individual')"><i class="fas fa-user"></i> Bireysel</div><div class="type-btn" id="btnCorporate" onclick="toggleCustomerType('corporate')"><i class="fas fa-building"></i> Kurumsal</div></div><form id="individualForm" class="row g-3"><div class="col-6"><input type="text" class="form-control" id="indName" placeholder="Ad" required></div><div class="col-6"><input type="text" class="form-control" id="indSurname" placeholder="Soyad" required></div><div class="col-6"><input type="tel" class="form-control" id="indPhone" placeholder="Telefon" required></div><div class="col-6"><input type="email" class="form-control" id="indEmail" placeholder="E-posta" required></div><div class="col-12"><textarea class="form-control" id="indAddress" placeholder="Teslimat Adresi" required></textarea></div><div class="col-12"><div class="form-check bg-light p-2 border"><input class="form-check-input" type="checkbox" id="indSameAddress" onchange="toggleBilling('individual')"><label class="form-check-label">Fatura adresi aynı olsun</label></div></div><div class="col-12" id="indBillingDiv"><textarea class="form-control" id="indBillingAddress" placeholder="Fatura Adresi"></textarea></div></form><form id="corporateForm" class="row g-3" style="display:none;"><div class="col-12"><input type="text" class="form-control" id="corpName" placeholder="Şirket İsmi" required></div><div class="col-6"><input type="tel" class="form-control" id="corpPhone" placeholder="Telefon" required></div><div class="col-6"><input type="email" class="form-control" id="corpEmail" placeholder="E-posta" required></div><div class="col-12"><textarea class="form-control" id="corpAddress" placeholder="Teslimat Adresi" required></textarea></div><div class="col-12"><div class="form-check bg-light p-2 border"><input class="form-check-input" type="checkbox" id="corpSameAddress" onchange="toggleBilling('corporate')"><label class="form-check-label">Fatura adresi aynı olsun</label></div></div><div class="col-12" id="corpBillingDiv"><textarea class="form-control" id="corpBillingAddress" placeholder="Fatura Adresi"></textarea></div></form><div class="alert alert-warning mt-3 p-2 small"><strong>IBAN:</strong> <span id="displayIban"></span><br><strong>Alıcı:</strong> <span id="displayAccountName"></span></div></div></div><div class="modal-footer"><button class="btn btn-success w-100 py-2" onclick="checkoutWhatsapp()"><i class="fab fa-whatsapp"></i> Siparişi Tamamla</button></div></div></div></div>
 
     <div class="modal fade" id="adminModal" tabindex="-1">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -304,6 +342,53 @@
         let activeFilter = { main: 'Tümü', sub: null }; let activePrice = { min: 0, max: Infinity }; let activeColor = []; let activeSize = [];
         let tempImages = [];
 
+        // --- TARİHÇE VE GERİ TUŞU YÖNETİMİ ---
+        let isPopState = false; // Geri tuşuyla mı gelindi kontrolü
+
+        function setUrlState(key, value) {
+            const url = new URL(window.location);
+            url.searchParams.set(key, value);
+            // pushState ile yeni bir geçmiş kaydı oluşturuyoruz, böylece geri tuşu çalışır
+            window.history.pushState({modal: key}, '', url);
+        }
+
+        function clearUrlState() {
+            // URL'i temizle ama geçmişi bozma (replaceState kullan)
+            const url = new URL(window.location);
+            // Eğer geri tuşuyla geldiysek zaten URL temizdir, bir şey yapma
+            if(isPopState) { isPopState = false; return; }
+            
+            // Eğer kullanıcı "X" ile kapattıysa, geçmişte geri gitmeliyiz ki URL düzelsin
+            // Ancak bunu yaparken sonsuz döngüye girmemeye dikkat etmeliyiz.
+            // En basit yöntem: ReplaceState ile URL'i temizle.
+            url.searchParams.delete('product');
+            url.searchParams.delete('cart');
+            window.history.replaceState({}, '', url.pathname + url.search);
+        }
+
+        // Browser Geri Tuşu Dinleyicisi
+        window.addEventListener('popstate', function(event) {
+            isPopState = true; // Flag'i kaldır
+            // Tüm modalları kapat
+            document.querySelectorAll('.modal.show').forEach(m => {
+                const modalInstance = bootstrap.Modal.getInstance(m);
+                if(modalInstance) modalInstance.hide();
+            });
+        });
+
+        // Modallar kapandığında URL'i temizle
+        document.addEventListener('hidden.bs.modal', function (event) {
+            if(!isPopState) {
+                // Eğer manuel kapatıldıysa URL'i temizle
+                const url = new URL(window.location);
+                url.searchParams.delete('product');
+                url.searchParams.delete('cart');
+                window.history.replaceState({}, '', url.pathname + url.search);
+            }
+            isPopState = false; // Reset
+        });
+
+
         // --- BAŞLANGIÇ ---
         document.addEventListener('DOMContentLoaded', function() {
             // Renk ayarını hatasız al
@@ -329,7 +414,7 @@
 
         // --- BULUT SİSTEMİ (JSONBIN) ---
         async function loadFromCloud() {
-            if(BIN_ID === "BURAYA_BIN_ID_YAZ") return; // ID girilmemişse varsayılanlarla devam et
+            if(BIN_ID === "BURAYA_BIN_ID_YAZ") return; 
             
             try {
                 let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`);
@@ -339,7 +424,6 @@
                     
                     if(rec.siteSettings) siteSettings = rec.siteSettings;
                     
-                    // Sadece bulutta veri varsa güncelle, yoksa eskiler kalsın
                     if(rec.banners && rec.banners.length > 0) banners = rec.banners;
                     if(rec.categories && rec.categories.length > 0) categories = rec.categories;
                     if(rec.products && rec.products.length > 0) products = rec.products;
@@ -352,17 +436,33 @@
                     renderProducts();
                     renderAdminProductList(); renderAdminCategories(); renderMainCatSelect(); renderAdminBanners();
 
-                    // URL'de ürün varsa aç
+                    // --- DEEP LINK KONTROLÜ (Veri geldikten sonra) ---
                     const urlParams = new URLSearchParams(window.location.search);
+                    
+                    // 1. Ürün Linki Kontrolü
                     if(urlParams.has('product')) {
                         const prodId = parseInt(urlParams.get('product'));
-                        if(!isNaN(prodId)) openProductDetail(prodId);
+                        if(!isNaN(prodId)) {
+                            // Ürünü bul ve aç (URL zaten set edilmiş, tekrar push yapma)
+                            const p = products.find(x => x.id === prodId);
+                            if(p) {
+                                openProductDetail(prodId, false); // false = URL güncelleme (zaten var)
+                            }
+                        }
                     }
+
+                    // 2. Sepet Linki Kontrolü
+                    if(urlParams.get('cart') === 'open') {
+                        const cartModal = new bootstrap.Modal(document.getElementById('cartModal'));
+                        cartModal.show();
+                        renderCart();
+                    }
+
                 }
             } catch (err) { console.error("Bulut hatası:", err); }
         }
 
-        // --- ÜRÜN LİSTELEME (DÜZELTİLDİ: SAYFA YENİLENMEZ) ---
+        // --- ÜRÜN LİSTELEME ---
         function renderProducts(){
             const l=document.getElementById('productList');l.innerHTML="";
             let min=parseFloat(document.getElementById('minPriceInput').value)||0;
@@ -385,7 +485,7 @@
             
             filtered.forEach(p=>{
                 let oldPriceDisplay=p.marketPrice>p.price?`<span class="old-price">${p.marketPrice} TL</span>`:"";
-                // LİNK YOK, ONCLICK VAR (Yenileme yapmaz)
+                // LİNK YOK, ONCLICK VAR
                 l.innerHTML+=`
                 <div class="col">
                     <div class="card product-card">
@@ -403,7 +503,7 @@
                 </div>`
             });
         }
-	async function saveToCloud() {
+    async function saveToCloud() {
             if (!API_KEY) return alert("Hata: Admin yetkisi yok, kaydedilemedi!");
             const payload = { siteSettings, banners, categories, products, admin_modu: true };
             try {
@@ -413,14 +513,10 @@
                     body: JSON.stringify(payload)
                 });
 
-                // HACI DEĞİŞİKLİK BURADA:
-                // Eğer cevap "OK" ise VEYA hata kodu 504 (Zaman Aşımı) ise başarılı say.
-                // 504 hatası; verinin kaydedildiğini ama cevabın geç geldiğini gösterir.
                 if (response.ok || response.status === 504) {
                     alert("✅ Değişiklikler Buluta Kaydedildi!");
                 } 
                 else {
-                    // Gerçekten bir sorun varsa hata kodunu da gösterelim ki anlayalım.
                     alert("❌ Kayıt başarısız! Hata Kodu: " + response.status);
                 }
             } catch (err) {
@@ -503,50 +599,81 @@
         }
 
         document.getElementById('prodImgFile').addEventListener('change', function(e) { const f = e.target.files[0]; if(f) { const r = new FileReader(); r.onload = function(ev) { const i = new Image(); i.onload = function() { const c = document.createElement('canvas'); const ctx = c.getContext('2d'); let w = i.width; let h = i.height; if(w>800){h*=800/w;w=800;} c.width=w; c.height=h; ctx.drawImage(i,0,0,w,h); tempImages.push(c.toDataURL('image/jpeg', 0.7)); renderAdminImagePreviews(); }; i.src = ev.target.result; }; r.readAsDataURL(f); } });
-        // KALİTEYİ BOZMADAN SADECE BOYUTU DENGELEYEN KOD
-document.getElementById('bannerImgFile').addEventListener('change', function(e) {
-    const f = e.target.files[0];
-    if (!f) return;
+        
+        document.getElementById('bannerImgFile').addEventListener('change', function(e) {
+            const f = e.target.files[0];
+            if (!f) return;
+            alert("⏳ Resim yükleniyor, lütfen bekleyin..."); 
+            const formData = new FormData();
+            formData.append("image", f);
+            const API_KEY = '8a0805cddea15f4c64b848a57d903133'; 
 
-    // Kullanıcıya bilgi veriyoruz
-    alert("⏳ Resim yükleniyor, lütfen bekleyin..."); 
-
-    const formData = new FormData();
-    formData.append("image", f);
-
-    // BURAYA DİKKAT: ImgBB'den aldığın API Key'i tırnakların içine yapıştır!
-    const API_KEY = '8a0805cddea15f4c64b848a57d903133'; 
-
-    fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.success) {
-            // İşte sihir burada: Bize resmin kendisi değil, adresi (linki) geliyor.
-            const resimLinki = result.data.url;
-            
-            // Linki gizli kutuya yazıyoruz. 
-            // "Ekle" butonuna bastığında artık devasa kodlar değil, bu kısacık link kaydedilecek.
-            document.getElementById('bannerImgBase64').value = resimLinki;
-            
-            alert("✅ Resim başarıyla yüklendi! Şimdi 'Ekle' butonuna basabilirsin.");
-            console.log("Resim Linki:", resimLinki); 
-        } else {
-            alert("❌ Hata: API Anahtarın yanlış olabilir mi?");
-        }
-    })
-    .catch(error => {
-        console.error('Hata:', error);
-        alert("❌ Sunucu hatası! İnternet bağlantını kontrol et.");
-    });
-});
-	        function renderAdminImagePreviews() { const c = document.getElementById('prodImagePreviewContainer'); c.innerHTML = ""; tempImages.forEach((img, idx) => { c.innerHTML += `<div style="display:inline-block; position:relative; margin-right:5px;"><img src="${img}" class="admin-img-preview-item"><span style="position:absolute; top:0; left:0; background:black; color:white; font-size:10px; padding:2px;">No: ${idx+1}</span><i class="fas fa-times text-danger" style="position:absolute; top:0; right:0; cursor:pointer; background:white; border-radius:50%;" onclick="removeTempImage(${idx})"></i></div>`; }); }
+            fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    const resimLinki = result.data.url;
+                    document.getElementById('bannerImgBase64').value = resimLinki;
+                    alert("✅ Resim başarıyla yüklendi! Şimdi 'Ekle' butonuna basabilirsin.");
+                } else {
+                    alert("❌ Hata: API Anahtarın yanlış olabilir mi?");
+                }
+            })
+            .catch(error => {
+                alert("❌ Sunucu hatası! İnternet bağlantını kontrol et.");
+            });
+        });
+        function renderAdminImagePreviews() { const c = document.getElementById('prodImagePreviewContainer'); c.innerHTML = ""; tempImages.forEach((img, idx) => { c.innerHTML += `<div style="display:inline-block; position:relative; margin-right:5px;"><img src="${img}" class="admin-img-preview-item"><span style="position:absolute; top:0; left:0; background:black; color:white; font-size:10px; padding:2px;">No: ${idx+1}</span><i class="fas fa-times text-danger" style="position:absolute; top:0; right:0; cursor:pointer; background:white; border-radius:50%;" onclick="removeTempImage(${idx})"></i></div>`; }); }
         function removeTempImage(idx) { tempImages.splice(idx, 1); renderAdminImagePreviews(); }
         function generateVariantTable() { const colors = document.getElementById('prodColors').value.split(',').map(s=>s.trim()).filter(s=>s); const sizes = document.getElementById('prodSizes').value.split(',').map(s=>s.trim()).filter(s=>s); document.getElementById('variantTableBody').innerHTML = ""; if(colors.length === 0 && sizes.length === 0) { addVariantRow("-", "-", 0, 0, 10, 1); } else { const cList = colors.length ? colors : ["-"]; const sList = sizes.length ? sizes : ["-"]; cList.forEach(c => { sList.forEach(s => { addVariantRow(c, s, 0, 0, 10, 1); }); }); } }
         function addVariantRow(c, s, mp, p, stk, imgIdx) { document.getElementById('variantTableBody').innerHTML += `<tr data-color="${c}" data-size="${s}" class="variant-row"><td>${c} / ${s}</td><td><input type="number" class="form-control form-control-sm v-mp" value="${mp}" placeholder="Piyasa"></td><td><input type="number" class="form-control form-control-sm v-p" value="${p}" placeholder="Satış"></td><td><input type="number" class="form-control form-control-sm v-stk" value="${stk}"></td><td><input type="number" class="form-control form-control-sm v-img" value="${imgIdx}" min="1"></td></tr>`; }
-        function openProductDetail(id) { const p = products.find(x => x.id === id); if(!p) return; currentDetailId = p.id; document.getElementById('detailTitle').innerText = p.name; document.getElementById('detailBrand').innerText = p.brand || ""; document.getElementById('detailModelCode').innerText = p.modelCode || ""; document.getElementById('detailDesc').innerText = p.desc || ""; document.getElementById('detailMaterial').innerText = p.material || "-"; document.getElementById('detailOrigin').innerText = p.origin || "TR"; document.getElementById('detailAge').innerText = p.ageGroup || "-"; document.getElementById('detailCatBadge').innerText = p.category; const mainImg = document.getElementById('detailImg'); const gallery = document.getElementById('detailGallery'); gallery.innerHTML = ""; p.images.forEach((img, idx) => { gallery.innerHTML += `<img src="${img}" class="gallery-thumb ${idx===0?'active':''}" onclick="changeDetailImage('${img}', this)">`; }); mainImg.src = p.images[0]; const colorDiv = document.getElementById('colorDiv'); const colorSelect = document.getElementById('detailColorSelect'); const sizeDiv = document.getElementById('sizeDiv'); const sizeSelect = document.getElementById('detailSizeSelect'); colorSelect.innerHTML = p.colors.length ? p.colors.map(c => `<option value="${c}">${c}</option>`).join('') : ""; sizeSelect.innerHTML = p.sizes.length ? p.sizes.map(s => `<option value="${s}">${s}</option>`).join('') : ""; colorDiv.style.display = p.colors.length ? 'block' : 'none'; sizeDiv.style.display = p.sizes.length ? 'block' : 'none'; colorSelect.onchange = updateDetailView; sizeSelect.onchange = updateDetailView; updateDetailView(); new bootstrap.Modal(document.getElementById('productDetailModal')).show(); }
+        
+        // --- ÜRÜN DETAY AÇMA GÜNCELLENDİ (URL DESTEKLİ) ---
+        function openProductDetail(id, updateUrl = true) { 
+            const p = products.find(x => x.id === id); 
+            if(!p) return; 
+            
+            // URL GÜNCELLEME
+            if(updateUrl) setUrlState('product', id);
+
+            currentDetailId = p.id; 
+            document.getElementById('detailTitle').innerText = p.name; 
+            document.getElementById('detailBrand').innerText = p.brand || ""; 
+            document.getElementById('detailModelCode').innerText = p.modelCode || ""; 
+            document.getElementById('detailDesc').innerText = p.desc || ""; 
+            document.getElementById('detailMaterial').innerText = p.material || "-"; 
+            document.getElementById('detailOrigin').innerText = p.origin || "TR"; 
+            document.getElementById('detailAge').innerText = p.ageGroup || "-"; 
+            document.getElementById('detailCatBadge').innerText = p.category; 
+            const mainImg = document.getElementById('detailImg'); 
+            const gallery = document.getElementById('detailGallery'); 
+            gallery.innerHTML = ""; 
+            p.images.forEach((img, idx) => { gallery.innerHTML += `<img src="${img}" class="gallery-thumb ${idx===0?'active':''}" onclick="changeDetailImage('${img}', this)">`; }); 
+            mainImg.src = p.images[0]; 
+            const colorDiv = document.getElementById('colorDiv'); 
+            const colorSelect = document.getElementById('detailColorSelect'); 
+            const sizeDiv = document.getElementById('sizeDiv'); 
+            const sizeSelect = document.getElementById('detailSizeSelect'); 
+            colorSelect.innerHTML = p.colors.length ? p.colors.map(c => `<option value="${c}">${c}</option>`).join('') : ""; 
+            sizeSelect.innerHTML = p.sizes.length ? p.sizes.map(s => `<option value="${s}">${s}</option>`).join('') : ""; 
+            colorDiv.style.display = p.colors.length ? 'block' : 'none'; 
+            sizeDiv.style.display = p.sizes.length ? 'block' : 'none'; 
+            colorSelect.onchange = updateDetailView; 
+            sizeSelect.onchange = updateDetailView; 
+            updateDetailView(); 
+            new bootstrap.Modal(document.getElementById('productDetailModal')).show(); 
+        }
+
+        // --- SEPET AÇMA GÜNCELLENDİ (URL DESTEKLİ) ---
+        function openCartModal() {
+            setUrlState('cart', 'open');
+            renderCart();
+            new bootstrap.Modal(document.getElementById('cartModal')).show();
+        }
+
         function changeDetailImage(src, el) { document.getElementById('detailImg').src = src; document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active')); el.classList.add('active'); }
         function updateDetailView() { const p = products.find(x => x.id === currentDetailId); const selectedColor = p.colors.length ? document.getElementById('detailColorSelect').value : "-"; const selectedSize = p.sizes.length ? document.getElementById('detailSizeSelect').value : "-"; const variant = p.variants.find(v => v.color === selectedColor && v.size === selectedSize); if (variant) { document.getElementById('detailPrice').innerText = variant.price + " TL"; if(variant.marketPrice > variant.price) { document.getElementById('detailOldPrice').innerText = variant.marketPrice + " TL"; document.getElementById('detailOldPrice').style.display = 'inline'; } else { document.getElementById('detailOldPrice').style.display = 'none'; } const stockBadge = document.getElementById('detailStockStatus'); if(variant.stock > 0) { stockBadge.innerHTML = `<i class="fas fa-check-circle"></i> Stokta Var (${variant.stock})`; stockBadge.className = "small text-success fw-bold"; } else { stockBadge.innerHTML = `<i class="fas fa-times-circle"></i> Tükendi`; stockBadge.className = "small text-danger fw-bold"; } if(variant.imgIndex >= 0 && variant.imgIndex < p.images.length) { const thumbs = document.querySelectorAll('.gallery-thumb'); if(thumbs[variant.imgIndex]) thumbs[variant.imgIndex].click(); } } }
         function addToCartFromDetail() { const p = products.find(x => x.id === currentDetailId); const cVal = p.colors.length ? document.getElementById('detailColorSelect').value : "-"; const sVal = p.sizes.length ? document.getElementById('detailSizeSelect').value : "-"; const variant = p.variants.find(v => v.color === cVal && v.size === sVal); if(!variant || variant.stock <= 0) return alert("Bu seçenek stokta yok!"); const varLabel = (cVal!=="-" || sVal!=="-") ? `${cVal} - ${sVal}` : ""; let existing = cart.find(i => i.id === p.id && i.variantLabel === varLabel); if(existing) existing.qty++; else cart.push({ id: p.id, qty: 1, variantLabel: varLabel, price: variant.price, image: p.images[variant.imgIndex] || p.images[0] }); updateCartCount(); bootstrap.Modal.getInstance(document.getElementById('productDetailModal')).hide(); alert("Sepete Eklendi"); }
